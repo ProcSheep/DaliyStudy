@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sticky 顶部搜索+表格示例</title>
+    <style>
+      /* 全局样式重置 */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        padding: 20px;
+        background-color: #f5f7fa;
+      }
+
+      /* 搜索区样式 - 核心 sticky 定位 */
+      .search-bar {
+        background-color: #fff;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+
+        /* sticky 核心配置 */
+        position: sticky;
+        top: 0px; /* 距离视口顶部 0px 固定 */
+        z-index: 10; /* 确保不被表格遮挡 */
+      }
+
+      .search-group {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .search-group input,
+      .search-group select {
+        padding: 8px 12px;
+        border: 1px solid #e5e6eb;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 180px;
+      }
+
+      .search-group button {
+        padding: 8px 16px;
+        background-color: #409eff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .search-group button:hover {
+        background-color: #3391e9;
+      }
+
+      /* 表格样式 */
+      .content-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .content-table th,
+      .content-table td {
+        padding: 12px 16px;
+        text-align: left;
+        border-bottom: 1px solid #e5e6eb;
+      }
+
+      .content-table th {
+        background-color: #f7f8fa;
+        font-weight: 600;
+        color: #1d2129;
+      }
+
+      .content-table tbody tr:hover {
+        background-color: #fafafa;
+      }
+
+      /* 增加表格行数，方便测试滚动 */
+      .content-table tbody tr {
+        height: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 顶部搜索栏（sticky 定位） -->
+    <div class="search-bar">
+      <div class="search-group">
+        <input type="text" placeholder="输入关键词搜索" />
+        <select>
+          <option value="">全部类型</option>
+          <option value="1">类型1</option>
+          <option value="2">类型2</option>
+        </select>
+        <input type="date" placeholder="选择日期" />
+        <button>搜索</button>
+      </div>
+    </div>
+
+    <!-- 内容表格 -->
+    <table class="content-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名称</th>
+          <th>类型</th>
+          <th>日期</th>
+          <th>状态</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 重复多行，模拟滚动效果 -->
+        <tr>
+          <td>1</td>
+          <td>测试数据1</td>
+          <td>类型1</td>
+          <td>2025-11-01</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>测试数据2</td>
+          <td>类型2</td>
+          <td>2025-11-02</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>测试数据3</td>
+          <td>类型1</td>
+          <td>2025-11-03</td>
+          <td>异常</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>测试数据4</td>
+          <td>类型2</td>
+          <td>2025-11-04</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>测试数据5</td>
+          <td>类型1</td>
+          <td>2025-11-05</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>测试数据6</td>
+          <td>类型2</td>
+          <td>2025-11-06</td>
+          <td>异常</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>测试数据7</td>
+          <td>类型1</td>
+          <td>2025-11-07</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>测试数据8</td>
+          <td>类型2</td>
+          <td>2025-11-08</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>测试数据9</td>
+          <td>类型1</td>
+          <td>2025-11-09</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>测试数据10</td>
+          <td>类型2</td>
+          <td>2025-11-10</td>
+          <td>异常</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>测试数据11</td>
+          <td>类型1</td>
+          <td>2025-11-11</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>测试数据12</td>
+          <td>类型2</td>
+          <td>2025-11-12</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>测试数据13</td>
+          <td>类型1</td>
+          <td>2025-11-13</td>
+          <td>异常</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>测试数据14</td>
+          <td>类型2</td>
+          <td>2025-11-14</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>测试数据15</td>
+          <td>类型1</td>
+          <td>2025-11-15</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>测试数据16</td>
+          <td>类型2</td>
+          <td>2025-11-16</td>
+          <td>异常</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>测试数据17</td>
+          <td>类型1</td>
+          <td>2025-11-17</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>测试数据18</td>
+          <td>类型2</td>
+          <td>2025-11-18</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>测试数据19</td>
+          <td>类型1</td>
+          <td>2025-11-19</td>
+          <td>正常</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>测试数据20</td>
+          <td>类型2</td>
+          <td>2025-11-20</td>
+          <td>异常</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

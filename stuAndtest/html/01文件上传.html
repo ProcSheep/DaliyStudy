@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件上传</title>
+  <style>
+    .container {
+      width: 100%;
+      height: 300px;
+      border: 1px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .container.highlight {
+      border-color: blue;
+      background-color: #e0f0ff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    拖拽文件到这里上传
+  </div>
+
+
+  <script>
+    const dropArea = document.querySelector(".container")
+    // 获取所有文件
+    let formData = new FormData()
+
+    const evt = ['dragenter', 'dragover', 'dragleave', 'drop', 'dragend']
+    evt.forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    // 阻止默认行为
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // 处理拖拽进入和悬停状态
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    // 处理拖拽离开和完成状态
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    // 高亮拖拽区域
+    function highlight() {
+      dropArea.classList.add('highlight');
+    }
+
+    // 取消高亮
+    function unhighlight() {
+      dropArea.classList.remove('highlight');
+    }
+
+    // 处理文件放下事件
+    dropArea.addEventListener("drop", handleDrop, false)
+
+    // 修改traverseFileTree为返回Promise
+    function traverseFileTree(entry) {
+      return new Promise((resolve, reject) => {
+        if (entry.isDirectory) {
+          const reader = entry.createReader();
+          reader.readEntries((entries) => {
+            Promise.all(entries.map(e => traverseFileTree(e))).then(resolve).catch(reject);
+          }, reject);
+        } else {
+          entry.file(file => {
+            formData.append('files', file);
+            resolve();
+          }, reject);
+        }
+      });
+    }
+
+    // 在handleDrop中等待文件处理完成
+    async function handleDrop(e) {
+      formData = new FormData(); // 清空之前的文件
+      const items = e.dataTransfer.items;
+      const promises = [];
+      for (const item of items) {
+        const entry = item.webkitGetAsEntry();
+        promises.push(traverseFileTree(entry));
+      }
+      await Promise.all(promises); // 等待所有文件处理完毕
+
+      // 数组/对象都可以迭代打印，没有必要是因为js自动toString转化了
+      for (const [key, value] of formData.entries()) {
+        console.log(`键：${key}，值：`, value);
+      }
+
+      
+      await uploadFiles();
+      // debugger 防止删除
+
+    }
+
+    async function uploadFiles() {
+      try {
+        // 关键：手动设置multipart/form-data头（需保留boundary）
+        const contentType = formData.getHeaders ? formData.getHeaders()['Content-Type'] : `multipart/form-data; boundary=${formData._boundary}`;
+        console.log(contentType)
+        
+        const response = await fetch('http://localhost:4000/uploadArray', {
+          method: 'POST',
+          body: formData
+        });
+
+        // 新增：打印响应状态和内容（确认请求成功）
+        console.log('响应状态:', response.status);
+        const result = await response.json();
+        console.log('上传结果:', result);
+      } catch (error) {
+        console.log('上传失败', error);
+      }
+    }
+
+
+  </script>
+</body>
+
+</html>
