@@ -1,0 +1,3230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI图像生成参数配置6</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        color: #333;
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: linear-gradient(to right, #4b6cb7, #182848);
+        color: white;
+        padding: 15px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo i {
+        font-size: 28px;
+        color: #ffd166;
+      }
+
+      .logo h1 {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .preset-selector {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .preset-label {
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      .preset-btn {
+        padding: 8px 15px;
+        background: #f0f4ff;
+        border: 1px solid #4b6cb7;
+        border-radius: 20px;
+        color: #4b6cb7;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .preset-btn:hover {
+        background: #4b6cb7;
+        color: white;
+      }
+
+      .preset-btn.active {
+        background: #4b6cb7;
+        color: white;
+      }
+
+      .main-content {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .params-panel {
+        flex: 1;
+        padding: 20px;
+        border-right: 1px solid #eee;
+        overflow-y: auto;
+        min-width: 350px;
+      }
+
+      .results-panel {
+        flex: 1;
+        padding: 20px;
+        background: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        min-width: 350px;
+      }
+
+      .panel-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #4b6cb7;
+        color: #182848;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .panel-title i {
+        color: #4b6cb7;
+      }
+
+      .form-group {
+        margin-bottom: 18px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #444;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #4b6cb7;
+        box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .slider-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .slider-container input[type="range"] {
+        flex: 1;
+      }
+
+      .slider-value {
+        min-width: 50px;
+        text-align: center;
+        font-weight: 600;
+        color: #4b6cb7;
+      }
+
+      .param-section {
+        background: white;
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 22px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .section-title {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: #182848;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .section-title i {
+        color: #4b6cb7;
+      }
+
+      /* 下载区域 */
+      /* .upload-area {
+        border: 2px dashed #4b6cb7;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: #f8fbff;
+      }
+
+      .upload-area:hover {
+        background: #eef5ff;
+      }
+
+      .upload-area i {
+        font-size: 48px;
+        color: #4b6cb7;
+        margin-bottom: 15px;
+      }
+
+      .image-preview {
+        max-width: 100%;
+        max-height: 200px;
+        margin-top: 15px;
+        border-radius: 8px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      } */
+
+      /* 下载区域，列表 */
+      .upload-area {
+        display: flex;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .upload-area .btn {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.6rem;
+        cursor: pointer;
+        /* transition: background-color 0.3s; */
+      }
+
+      .btn-upload {
+        background-color: #4299e1;
+        color: white;
+        margin-right: 1rem;
+      }
+
+      .btn-upload:hover {
+        background-color: #3182ce;
+      }
+
+      .btn-clear-images {
+        background-color: #f56565;
+        color: white;
+        margin-right: 1rem;
+      }
+
+      .btn-clear-images:hover {
+        background-color: #e53e3e;
+      }
+
+      .btn-clear-selection {
+        background-color: #94a3b8;
+        color: white;
+      }
+
+      .btn-clear-selection:hover {
+        background-color: #64748b;
+      }
+
+      .btn:disabled {
+        background-color: #d1d5db;
+        cursor: not-allowed;
+        opacity: 0.7;
+      }
+
+      /* 选中数量统计 */
+      .upload-area .selected-count {
+        color: #6b7280;
+        font-size: 0.7rem;
+        margin-top: 0.6rem;
+        margin-left: 0.4rem;
+      }
+
+      /* 图片预览区域 */
+      .image-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+        max-height: 600px;
+        overflow-y: auto;
+        padding: 1rem;
+        border: 1px dashed #e5e7eb;
+        border-radius: 8px;
+      }
+
+      /* 图片预览样式 - 新增选中状态 */
+      .image-preview-wrapper {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+
+      .image-preview-wrapper:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      /* 选中状态样式 */
+      .image-preview-wrapper.selected {
+        border: 3px solid #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      }
+
+      .image-preview {
+        width: 200px;
+        height: 150px;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* 复选框覆盖层 */
+      .image-checkbox {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        opacity: 0.8;
+      }
+
+      .image-checkbox.checked {
+        background-color: #3b82f6;
+        color: white;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .btn-group .btn {
+        padding: 14px 25px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(to right, #4b6cb7, #182848);
+        color: white;
+        flex: 1;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(75, 108, 183, 0.4);
+      }
+
+      .btn-primary:disabled {
+        background: #a0aec0;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #444;
+      }
+
+      .btn-secondary:hover {
+        background: #e0e0e0;
+      }
+
+      .btn-secondary:disabled {
+        background: #d1d5db;
+        cursor: not-allowed;
+      }
+
+      .results-container {
+        gap: 20px;
+        padding: 15px;
+        overflow-y: auto;
+        max-height: 85vh;
+      }
+
+      .progress-container {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .single-result {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 20px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+      }
+
+      .single-image {
+        max-width: 100%;
+        max-height: 60vh;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        object-fit: contain;
+        background: #f5f5f5;
+        border: 1px solid #eee;
+      }
+
+      .result-details {
+        margin-top: 20px;
+        width: 100%;
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        max-width: 800px;
+      }
+
+      .result-item {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: calc(90% - 10px);
+        margin-bottom: 10px;
+      }
+
+      .result-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .result-info {
+        padding: 15px;
+      }
+
+      .result-model {
+        font-weight: 600;
+        color: #182848;
+        margin-bottom: 5px;
+      }
+
+      .result-prompt {
+        font-size: 14px;
+        color: #666;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .progress-bar {
+        height: 20px;
+        background: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 10px 0;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(to right, #4b6cb7, #182848);
+        border-radius: 10px;
+        transition: width 0.5s;
+      }
+
+      .progress-text {
+        text-align: center;
+        font-weight: 600;
+        color: #444;
+      }
+      /* 下载按钮样式 */
+      .download-container {
+        margin-top: 15px;
+        text-align: center;
+      }
+
+      .download-btn {
+        display: inline-block;
+        padding: 8px 20px;
+        background: linear-gradient(to right, #4b6cb7, #182848);
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* 单个结果中的下载按钮 */
+      .single-result .download-btn {
+        padding: 10px 25px;
+        font-size: 16px;
+      }
+      .history-panel {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        max-height: 250px;
+        overflow-y: auto;
+      }
+
+      .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .history-item {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .history-item:hover {
+        background: #f5f8ff;
+      }
+
+      .history-title {
+        font-weight: 600;
+        color: #182848;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .history-date {
+        font-size: 12px;
+        color: #777;
+      }
+
+      .history-prompt {
+        font-size: 14px;
+        color: #666;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .detail-row {
+        display: flex;
+        margin-bottom: 10px;
+      }
+
+      .detail-label {
+        font-weight: 600;
+        color: #182848;
+        width: 120px;
+      }
+
+      .detail-value {
+        flex: 1;
+        color: #444;
+        word-break: break-word;
+      }
+
+      .no-results {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 14%;
+        color: #888;
+        text-align: center;
+        padding: 30px;
+      }
+
+      .no-results i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        color: #ccc;
+      }
+
+      .error-message {
+        background: #ffecec;
+        color: #e74c3c;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #e74c3c;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .clear-history-btn {
+        background: none;
+        border: none;
+        color: #e74c3c;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 5px;
+      }
+
+      .clear-history-btn:hover {
+        text-decoration: underline;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-idle {
+        background-color: #ccc;
+      }
+
+      .status-processing {
+        background-color: #4b6cb7;
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .main-content {
+          flex-direction: column;
+        }
+
+        .params-panel {
+          border-right: none;
+          border-bottom: 1px solid #eee;
+        }
+
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .preset-selector {
+          margin-top: 10px;
+        }
+      }
+      /* 下载按钮加载动画 */
+      .fa-spinner {
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 禁用状态 */
+      .download-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      @media (max-width: 768px) {
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .single-image {
+          max-height: 50vh;
+        }
+
+        .history-panel {
+          max-height: 200px;
+        }
+      }
+
+      /* 图片详情模态框样式 */
+      .image-detail-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        position: relative;
+        background: #1e1e2e;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        width: 90%;
+        max-width: 1000px;
+        max-height: 90vh;
+        display: flex;
+        overflow: hidden;
+        z-index: 1001;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 10;
+      }
+
+      .close-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(90deg);
+      }
+
+      .image-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: #121220;
+      }
+
+      .detail-image {
+        max-width: 100%;
+        max-height: 80vh;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .image-info {
+        flex: 1;
+        padding: 30px;
+        background: #2a2a3a;
+        overflow-y: auto;
+        max-height: 80vh;
+      }
+
+      .image-info h3 {
+        color: #8a5cf6;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        border-bottom: 1px solid #444;
+        padding-bottom: 10px;
+      }
+
+      .info-row {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #333;
+      }
+
+      .info-label {
+        display: block;
+        color: #8a5cf6;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .info-value {
+        color: #e2e2e2;
+        line-height: 1.5;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      /* .btn {
+        padding: 10px 20px;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+      } */
+
+      .download-btn {
+        background: linear-gradient(135deg, #8a5cf6, #6d28d9);
+        color: white;
+      }
+
+      .download-btn:hover {
+        background: linear-gradient(135deg, #9b76f7, #7d3ce0);
+        transform: translateY(-2px);
+      }
+
+      .close-btn {
+        background: #444;
+        color: #ccc;
+      }
+
+      .close-btn:hover {
+        background: #555;
+      }
+
+      /* 结果区域按钮样式 */
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .action-btn {
+        padding: 8px 15px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s ease;
+      }
+
+      .view-btn {
+        background: rgba(138, 92, 246, 0.2);
+        color: #8a5cf6;
+        border: 1px solid #8a5cf6;
+      }
+
+      .view-btn:hover {
+        background: rgba(138, 92, 246, 0.3);
+      }
+
+      .download-btn {
+        background: rgba(74, 222, 128, 0.2);
+        color: #4ade80;
+        border: 1px solid #4ade80;
+      }
+
+      .download-btn:hover {
+        background: rgba(74, 222, 128, 0.3);
+      }
+
+      .result-image,
+      .single-image {
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .result-image:hover,
+      .single-image:hover {
+        transform: scale(1.02);
+      }
+      /* 添加多图布局样式 */
+      .results-container {
+        margin-top: 30px;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+      }
+
+      .result-item {
+        margin-bottom: 30px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .result-header {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .images-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .image-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .image-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .generated-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        cursor: pointer;
+      }
+
+      .image-info {
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f5f5f5;
+      }
+
+      .download-btn {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .download-btn:hover {
+        background-color: #45a049;
+      }
+
+      /* --- */
+      .btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.6rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 0.8rem;
+        margin-bottom: 1.5rem;
+        align-items: center;
+      }
+
+      .header-actions .selected-count {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      .btn-add {
+        background-color: #4299e1;
+        color: white;
+      }
+
+      .btn-add:hover {
+        background-color: #3182ce;
+      }
+
+      .btn-clear {
+        background-color: #f56565;
+        color: white;
+        margin-left: auto;
+      }
+
+      .btn-clear:hover {
+        background-color: #e53e3e;
+      }
+
+      .list-container {
+        margin-top: 1rem;
+      }
+
+      .list-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background-color: #fafafa;
+        border-radius: 6px;
+        margin-bottom: 0.8rem;
+        transition: background-color 0.3s;
+      }
+
+      .list-item:hover {
+        background-color: #f0f8fb;
+      }
+
+      .btn-delete {
+        background-color: #fef2f2;
+        color: #dc2626;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .btn-delete:hover {
+        background-color: #fee2e2;
+      }
+
+      .empty-tip {
+        text-align: center;
+        color: #9ca3af;
+        padding: 2rem 0;
+        font-size: 1rem;
+      }
+
+      /* 添加/编辑弹框样式 */
+      .dialog-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .dialog-content {
+        background-color: white;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 600px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .dialog-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.2rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 0.8rem;
+      }
+
+      .dialog-title {
+        font-size: 1.2rem;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #999;
+        cursor: pointer;
+        transition: color 0.3s;
+      }
+
+      .btn-close:hover {
+        color: #333;
+      }
+
+      .dialog-body {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.2rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .form-textarea {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+        min-height: 120px;
+        max-height: 300px;
+        resize: vertical;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      .form-textarea:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.1);
+      }
+
+      .dialog-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.8rem;
+      }
+
+      .btn-cancel {
+        background-color: #f3f4f6;
+        color: #333;
+      }
+
+      .btn-cancel:hover {
+        background-color: #e5e7eb;
+      }
+
+      .btn-confirm {
+        background-color: #4299e1;
+        color: white;
+      }
+
+      .btn-confirm:hover {
+        background-color: #3182ce;
+      }
+
+      /* 成对列表项样式 */
+      .pair-item {
+        background-color: #f9fafb;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+        cursor: pointer; /* 点击选中/取消选中 */
+      }
+
+      /* 选中状态样式 - 明显区分 */
+      .pair-item.selected {
+        background-color: #e0f2fe;
+        border: 2px solid #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+      }
+
+      .pair-header {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        background-color: #f3f4f6;
+        border-bottom: 1px solid #eee;
+      }
+
+      /* 选中状态下的头部背景 */
+      .pair-item.selected .pair-header {
+        background-color: #dbeafe;
+      }
+
+      .pair-checkbox {
+        margin-right: 1rem;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      .pair-index {
+        font-weight: 600;
+        color: #333;
+        margin-right: 1rem;
+      }
+
+      .pair-tag {
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        color: white;
+        background-color: #4299e1;
+      }
+
+      /* 选中状态下的标签颜色 */
+      .pair-item.selected .pair-tag {
+        background-color: #2563eb;
+      }
+
+      .pair-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .btn-edit-pair {
+        background-color: #4ade80;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      .btn-edit-pair:hover {
+        background-color: #22c55e;
+      }
+
+      .btn-delete-pair {
+        background-color: #f87171;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      .btn-delete-pair:hover {
+        background-color: #ef4444;
+      }
+
+      .pair-content {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 1rem;
+        gap: 1rem;
+      }
+
+      .prompt-item {
+        flex: 1;
+        min-width: 250px;
+        padding: 0.8rem;
+        border-radius: 6px;
+      }
+
+      .prompt-normal {
+        background-color: #f0f8fb;
+        border: 1px solid #dbeafe;
+      }
+
+      .prompt-negative {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+      }
+
+      /* 选中状态下的提示词背景 */
+      .pair-item.selected .prompt-normal {
+        background-color: #e0f7ff;
+        border-color: #93c5fd;
+      }
+
+      .pair-item.selected .prompt-negative {
+        background-color: #fee2e2;
+        border-color: #fca5a5;
+      }
+
+      .prompt-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+        display: block;
+      }
+
+      .label-normal {
+        color: #2563eb;
+      }
+
+      .label-negative {
+        color: #dc2626;
+      }
+
+      .prompt-text {
+        color: #333;
+        font-size: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.5;
+      }
+
+      .empty-tip {
+        text-align: center;
+        color: #9ca3af;
+        padding: 2rem 0;
+        font-size: 1rem;
+      }
+
+      /* 多行文本域样式（核心修改） */
+      .form-textarea {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+        min-height: 120px; /* 最小高度，默认显示4-5行文本 */
+        max-height: 300px; /* 最大高度，避免过高 */
+        resize: vertical; /* 允许垂直拖动调整高度 */
+        line-height: 1.5; /* 行高优化，提升可读性 */
+        white-space: pre-wrap; /* 保留换行符，支持自动换行 */
+      }
+
+      .form-textarea:focus {
+        border-color: #4299e1;
+        box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.1);
+      }
+
+      .dialog-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.8rem;
+      }
+
+      .btn-cancel {
+        background-color: #f3f4f6;
+        color: #333;
+      }
+
+      .btn-cancel:hover {
+        background-color: #e5e7eb;
+      }
+
+      .btn-confirm {
+        background-color: #4299e1;
+        color: white;
+      }
+
+      .btn-confirm:hover {
+        background-color: #3182ce;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <header>
+          <div class="logo">
+            <i class="fas fa-robot"></i>
+            <h1>AI图像生成</h1>
+            <span
+              class="status-indicator"
+              :class="isProcessing ? 'status-processing' : 'status-idle'"
+            ></span>
+          </div>
+          <div class="preset-selector">
+            <div class="preset-label">预设:</div>
+            <button
+              class="preset-btn"
+              v-for="(preset, name) in presets"
+              :key="name"
+              @click="loadPreset(name)"
+            >
+              <i class="fas fa-cog"></i> {{ name }}
+            </button>
+          </div>
+        </header>
+
+        <div class="main-content">
+          <!-- 参数配置面板 -->
+          <div class="params-panel">
+            <div class="panel-title">
+              <i class="fas fa-sliders-h"></i>
+              <span>参数配置</span>
+            </div>
+
+            <!-- 错误提示 -->
+            <div class="error-message" v-if="errorMessage">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ errorMessage }}
+            </div>
+
+            <!-- 基础参数 -->
+            <div class="param-section">
+              <div class="section-title">
+                <i class="fas fa-cog"></i>
+                <span>基础参数</span>
+              </div>
+
+              <div class="form-group">
+                <label for="modelType">模型类型</label>
+                <select id="modelType" v-model="params.modelType">
+                  <optgroup label="文生图">
+                    <option value="fluxschnell">fluxschnell</option>
+                    <option value="wanx">通义万相</option>
+                    <option value="openai">OpenAI</option>
+                    <option value="civitai">Civitai</option>
+                    <option value="qianwen">阿里云</option>
+                    <option value="volc">字节跳动</option>
+                  </optgroup>
+                  <optgroup label="图生图">
+                    <option value="volc_2">字节跳动</option>
+                    <option value="qianwen_2">阿里云</option>
+                  </optgroup>
+                  <optgroup label="所有模型">
+                    <option value="all">所有模型</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="prompt"
+                  >提示词 <span class="required">*</span></label
+                >
+                <!-- 顶部操作区 - 新增已选数量和清空选择按钮 -->
+                <div class="header-actions">
+                  <div class="selected-count">
+                    已选择：{{ selectPairList.length }} 组
+                  </div>
+                  <button
+                    class="btn btn-clear-selection"
+                    @click="clearSelection"
+                    :disabled="selectPairList.length === 0"
+                  >
+                    清空选择
+                  </button>
+                  <button class="btn btn-clear" @click="clearAll">
+                    清空全部
+                  </button>
+                  <button class="btn btn-add" @click="openAddDialog">
+                    添加正负提示词对
+                  </button>
+                </div>
+
+                <!-- 列表容器 -->
+                <div class="list-container">
+                  <!-- 空列表提示 -->
+                  <div class="empty-tip" v-if="pairList.length === 0">
+                    暂无提示词对，点击添加按钮创建第一个吧～
+                  </div>
+
+                  <!-- 成对列表项渲染 - 新增选择功能 -->
+                  <div
+                    class="pair-item"
+                    v-for="(pair, index) in pairList"
+                    :key="index"
+                    :class="{ selected: isSelected(index) }"
+                    @click="toggleSelect(index, $event)"
+                  >
+                    <div class="pair-header">
+                      <!-- 复选框 - 直观展示选择状态 -->
+                      <!-- <input
+                        type="checkbox"
+                        class="pair-checkbox"
+                        :checked="isSelected(index)"
+                        @click.stop
+                      /> -->
+                      <span class="pair-index">提示词对 {{ index + 1 }}</span>
+                      <div class="pair-actions">
+                        <!-- 编辑/删除按钮阻止事件冒泡，避免触发选择 -->
+                        <button
+                          class="btn btn-edit-pair"
+                          @click.stop="openEditDialog(index)"
+                        >
+                          编辑
+                        </button>
+                        <button
+                          class="btn btn-delete-pair"
+                          @click.stop="deletePair(index)"
+                        >
+                          删除
+                        </button>
+                      </div>
+                    </div>
+                    <div class="pair-content">
+                      <!-- 普通提示词 -->
+                      <div class="prompt-item prompt-normal">
+                        <span class="prompt-label label-normal"
+                          >普通提示词</span
+                        >
+                        <span class="prompt-text">{{ pair.normal }}</span>
+                      </div>
+                      <!-- 负面提示词 -->
+                      <div class="prompt-item prompt-negative">
+                        <span class="prompt-label label-negative"
+                          >负面提示词</span
+                        >
+                        <span class="prompt-text">{{ pair.negative }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 1. 添加提示词对弹框（textarea 替换 input） -->
+              <div
+                class="dialog-overlay"
+                v-if="isAddDialogOpen"
+                @click="closeAddDialog"
+              >
+                <div class="dialog-content" @click.stop>
+                  <div class="dialog-header">
+                    <h3 class="dialog-title">添加正负提示词对</h3>
+                    <button class="btn-close" @click="closeAddDialog">
+                      &times;
+                    </button>
+                  </div>
+                  <div class="dialog-body">
+                    <div class="form-group">
+                      <label class="form-label label-normal">普通提示词</label>
+                      <textarea
+                        class="form-textarea"
+                        v-model="addNormalValue"
+                        placeholder="输入普通提示词内容（支持多行）..."
+                        autocomplete="off"
+                      ></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label label-negative"
+                        >负面提示词</label
+                      >
+                      <textarea
+                        class="form-textarea"
+                        v-model="addNegativeValue"
+                        placeholder="输入对应的负面提示词内容（可选）..."
+                        autocomplete="off"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div class="dialog-footer">
+                    <button class="btn btn-cancel" @click="closeAddDialog">
+                      取消
+                    </button>
+                    <button class="btn btn-confirm" @click="confirmAddPair">
+                      确认添加
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. 编辑提示词对弹框（textarea 替换 input） -->
+              <div
+                class="dialog-overlay"
+                v-if="isEditDialogOpen"
+                @click="closeEditDialog"
+              >
+                <div class="dialog-content" @click.stop>
+                  <div class="dialog-header">
+                    <h3 class="dialog-title">
+                      编辑提示词对 {{ editIndex + 1 }}
+                    </h3>
+                    <button class="btn-close" @click="closeEditDialog">
+                      &times;
+                    </button>
+                  </div>
+                  <div class="dialog-body">
+                    <div class="form-group">
+                      <label class="form-label label-normal">普通提示词</label>
+                      <textarea
+                        class="form-textarea"
+                        v-model="editNormalValue"
+                        placeholder="输入普通提示词内容（支持多行）..."
+                        autocomplete="off"
+                      ></textarea>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label label-negative"
+                        >负面提示词</label
+                      >
+                      <textarea
+                        class="form-textarea"
+                        v-model="editNegativeValue"
+                        placeholder="输入对应的负面提示词内容（支持多行）..."
+                        autocomplete="off"
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div class="dialog-footer">
+                    <button class="btn btn-cancel" @click="closeEditDialog">
+                      取消
+                    </button>
+                    <button class="btn btn-confirm" @click="confirmEditPair">
+                      保存修改
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group" v-if="params.modelType === 'volc_2'">
+                <label for="n">生成数量 <span class="required"></span></label>
+                <input
+                  type="number"
+                  id="n"
+                  v-model.number="params.n"
+                  min="1"
+                  max="15"
+                  placeholder="输入1-15之间的数字"
+                  @input="validateN"
+                />
+                <!-- <div v-if="nError" class="error">{{ nError }}</div> -->
+              </div>
+
+              <div class="form-group" v-if="!isImgToImgModel">
+                <label for="modelUrn"
+                  >模型URN (仅Civitai生效) <span class="required"></span
+                ></label>
+                <input
+                  type="text"
+                  id="modelUrn"
+                  v-model="params.modelUrn"
+                  placeholder="例如: urn:air:sd1:checkpoint:civitai:4384@128713"
+                />
+                <div class="hint">
+                  格式示例: urn:air:sd1:checkpoint:civitai:4384@128713
+                </div>
+              </div>
+            </div>
+
+            <!-- 图生图参数 -->
+            <div class="param-section" v-if="isImgToImgModel">
+              <div class="section-title">
+                <i class="fas fa-exchange-alt"></i>
+                <span>图生图模式 <span class="required"> * </span></span>
+                <!-- 必填标识 -->
+              </div>
+              <!-- 上传按钮与操作区 -->
+              <div class="upload-area">
+                <!-- 隐藏原生文件输入框 -->
+                <input
+                  type="file"
+                  id="fileInput"
+                  ref="fileInput"
+                  multiple
+                  @change="handleImageUpload"
+                  accept="image/jpeg,image/png"
+                  style="display: none"
+                />
+                <!-- 自定义上传按钮 -->
+                <button class="btn btn-upload" @click="triggerFileInput">
+                  上传图片
+                </button>
+                <button
+                  class="btn btn-clear-images"
+                  @click="clearAllImages"
+                  :disabled="imageBase64Arr.length === 0"
+                >
+                  清空所有图片
+                </button>
+                <button
+                  class="btn btn-clear-selection"
+                  @click="clearImageSelection"
+                  :disabled="selectImageBase64Arr.length === 0"
+                >
+                  清空选择
+                </button>
+                <!-- 选中数量统计 -->
+                <div class="selected-count">
+                  已上传：{{ imageBase64Arr.length }} 张 | 已选择：{{
+                  selectImageBase64Arr.length }} 张
+                </div>
+              </div>
+
+              <!-- 图片预览区域 -->
+              <div class="image-preview-container">
+                <template v-if="imageBase64Arr.length > 0">
+                  <!-- 循环渲染上传的图片 -->
+                  <div
+                    class="image-preview-wrapper"
+                    v-for="(img, imgIndex) in imageBase64Arr"
+                    :key="imgIndex"
+                    :class="{ selected: isImageSelected(img) }"
+                    @click="toggleImageSelect(img, $event)"
+                  >
+                    <img :src="img" class="image-preview" alt="预览图" />
+                    <!-- 选中状态复选框 -->
+                    <div
+                      class="image-checkbox"
+                      :class="{ checked: isImageSelected(img) }"
+                    >
+                      <span v-if="isImageSelected(img)">✓</span>
+                    </div>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="empty-tip">
+                    暂无上传的图片，点击上传按钮添加图片吧～
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- 图像参数 -->
+            <div
+              class="param-section"
+              v-if="!isImgToImgModel || params.modelType==='volc_2'"
+            >
+              <div class="section-title" v-if="!isImgToImgModel">
+                <i class="fas fa-image"></i>
+                <span>图像参数</span>
+              </div>
+
+              <div class="form-group" v-if="!isImgToImgModel">
+                <label for="width">宽度 (仅Civitai生效)</label>
+                <input
+                  type="number"
+                  id="width"
+                  v-model="params.width"
+                  min="256"
+                  max="2048"
+                />
+              </div>
+
+              <div class="form-group" v-if="!isImgToImgModel">
+                <label for="height">高度 (仅Civitai生效)</label>
+                <input
+                  type="number"
+                  id="height"
+                  v-model="params.height"
+                  min="256"
+                  max="2048"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="size">尺寸</label>
+                <select id="size" v-model="params.size">
+                  <!-- 根据模型类型动态显示尺寸选项 -->
+                  <template v-if="params.modelType === 'openai'">
+                    <optgroup label="OpenAI">
+                      <option value="1024x1024">1024x1024</option>
+                      <option value="1024x1792">1024x1792</option>
+                      <option value="1792x1024">1792x1024</option>
+                    </optgroup>
+                  </template>
+                  <template v-else-if="params.modelType === 'qianwen'">
+                    <optgroup label="阿里云">
+                      <option value="1664*928">1664 * 928</option>
+                      <option value="1472*1140">1472 * 1140</option>
+                      <option value="1328*1328">1328 * 1328</option>
+                      <option value="1140*1472">1140 * 1472</option>
+                      <option value="928*1664">928 * 1664</option>
+                    </optgroup>
+                  </template>
+                  <template
+                    v-else-if="params.modelType === 'volc'|| params.modelType ==='volc_2'"
+                  >
+                    <optgroup label="字节跳动">
+                      <option value="2048x2048">2048x2048</option>
+                      <option value="2304x1728">2304x1728</option>
+                      <option value="1728x2304">1728x2304</option>
+                      <option value="2560x1440">2560x1440</option>
+                      <option value="1440x2560">1440x2560</option>
+                      <option value="2496x1664">2496x1664</option>
+                      <option value="1664x2496">1664x2496</option>
+                      <option value="3024x1296">3024x1296</option>
+                      <option value="4K">4K</option>
+                      <option value="2K">2K</option>
+                      <option value="1K">1K</option>
+                    </optgroup>
+                  </template>
+                  <template v-else-if="params.modelType === 'wanx'">
+                    <optgroup label="通义万相">
+                      <option value="768*768">768 * 768</option>
+                      <option value="576*1024">576 * 1024</option>
+                      <option value="1024*576">1024 * 576</option>
+                      <option value="1024*1024">1024 * 1024</option>
+                      <option value="720*1280">720 * 1280</option>
+                      <option value="1280*720">1280 * 720</option>
+                      <option value="864*1152">864 * 1152</option>
+                      <option value="1152*864">1152 * 864</option>
+                    </optgroup>
+                  </template>
+                  <template v-else>
+                    <option value="">无可用尺寸选项</option>
+                  </template>
+                </select>
+              </div>
+            </div>
+
+            <!-- 高级参数 -->
+            <div class="param-section" v-if="!isImgToImgModel">
+              <div class="section-title">
+                <i class="fas fa-tools"></i>
+                <span>高级参数</span>
+              </div>
+
+              <div class="form-group">
+                <label for="scheduler">调度器 (仅Civitai生效)</label>
+                <select id="scheduler" v-model="params.scheduler">
+                  <optgroup label="Euler家族">
+                    <option value="EulerA">EulerA</option>
+                    <option value="Euler">Euler</option>
+                  </optgroup>
+                  <optgroup label="DPM家族">
+                    <option value="DPM2">DPM2</option>
+                    <option value="DPM2A">DPM2A</option>
+                    <option value="DPM2SA">DPM2SA</option>
+                    <option value="DPM2M">DPM2M</option>
+                  </optgroup>
+                  <optgroup label="Karras家族">
+                    <option value="LMSKarras">LMSKarras</option>
+                    <option value="DPM2Karras">DPM2Karras</option>
+                  </optgroup>
+                  <optgroup label="其他">
+                    <option value="DDIM">DDIM</option>
+                    <option value="PLMS">PLMS</option>
+                    <option value="LCM">LCM</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="steps">迭代步数 (1-100)</label>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="steps"
+                    v-model="params.steps"
+                    min="1"
+                    max="100"
+                  />
+                  <div class="slider-value">{{ params.steps }}</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="cfgScale">CFG尺度 (0-20)</label>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="cfgScale"
+                    v-model="params.cfgScale"
+                    min="0"
+                    max="20"
+                    step="0.1"
+                  />
+                  <div class="slider-value">{{ params.cfgScale }}</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="seed">随机种子</label>
+                <input type="number" id="seed" v-model="params.seed" min="0" />
+              </div>
+
+              <div class="form-group">
+                <label for="clipSkip">CLIP跳过层数 (1-12)</label>
+                <input
+                  type="number"
+                  id="clipSkip"
+                  v-model="params.clipSkip"
+                  min="1"
+                  max="12"
+                />
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button
+                class="btn btn-secondary"
+                @click="savePreset"
+                :disabled="isProcessing"
+              >
+                <i class="fas fa-save"></i> 保存预设
+              </button>
+              <button
+                class="btn btn-primary"
+                @click="submitTask"
+                :disabled="isProcessing"
+              >
+                <i class="fas fa-magic"></i> {{ isProcessing ? '生成中...' :
+                '生成图像' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- 结果展示面板 -->
+          <div class="results-panel">
+            <div class="panel-title">
+              <i class="fas fa-images"></i>
+              <span>生成结果</span>
+              <a
+                href="#"
+                class="action-btn download-btn"
+                @click="handleManyDownload($event)"
+              >
+                <i class="fas fa-download"></i> 批量下载
+              </a>
+            </div>
+
+            <!-- 进度条 -->
+            <div class="progress-container" v-if="isProcessing">
+              <div class="progress-text">处理中: {{ progressMessage }}</div>
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  :style="{width: progress + '%'}"
+                ></div>
+              </div>
+              <div class="progress-text">{{ progress }}%</div>
+            </div>
+
+            <!-- 结果展示部分 -->
+            <div class="results-container" v-if="results.length > 0">
+              <div
+                class="result-item"
+                v-for="(result, resultIndex) in results"
+                :key="resultIndex"
+              >
+                <!-- 1.多模型结果展示（模型类型为'all'） -->
+                <template v-if="params.modelType === 'all'">
+                  <!-- 1.1多图展示 -->
+                  <div
+                    v-if="result[0].images && result[0].images.length > 1"
+                    class="multi-image-container"
+                  >
+                    <div class="images-grid">
+                      <div
+                        v-for="(image, imageIndex) in result[0].images"
+                        :key="imageIndex"
+                        class="image-card"
+                      >
+                        <img
+                          :src="image.url"
+                          class="result-image"
+                          @click="showImageDetail({...result[0], ...image})"
+                        />
+                        <div class="image-info">
+                          <span class="image-index"
+                            >图片 {{ image.index }}/{{ image.total }}</span
+                          >
+                          <a
+                            href="#"
+                            class="action-btn download-btn"
+                            @click="handleDownload($event, image.url, result[0].model, imageIndex)"
+                          >
+                            <i class="fas fa-download"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="result-info">
+                      <div class="result-model">{{ result[0].model }}</div>
+                      <div class="result-prompt">{{ result[0].prompt }}</div>
+                      <div class="action-buttons">
+                        <a
+                          href="#"
+                          class="action-btn view-btn"
+                          @click.prevent="showImageDetail({...result[0], ...result[0].images[0]})"
+                        >
+                          <i class="fas fa-search-plus"></i> 查看详情
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 1.2单图展示 -->
+                  <div v-else>
+                    <div v-if="result[0].images && result[0].images.length > 0">
+                      <img
+                        :src="result[0].images[0].url"
+                        class="result-image"
+                        @click="showImageDetail({...result[0], ...result[0].images[0]})"
+                      />
+                      <div class="result-info">
+                        <div class="result-model">{{ result[0].model }}</div>
+                        <div class="result-prompt">{{ result[0].prompt }}</div>
+                        <div class="action-buttons">
+                          <a
+                            href="#"
+                            class="action-btn view-btn"
+                            @click.prevent="showImageDetail({...result[0], ...result[0].images[0]})"
+                          >
+                            <i class="fas fa-search-plus"></i> 查看详情
+                          </a>
+                          <a
+                            href="#"
+                            class="action-btn download-btn"
+                            @click="handleDownload($event, result[0].images[0].url, result[0].model, resultIndex)"
+                          >
+                            <i class="fas fa-download"></i> 下载
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- 单模型结果展示 (比如字节跳动) -->
+                <template v-else>
+                  <div class="single-result">
+                    <!-- 2.1多图展示 -->
+                    <div
+                      v-if="result[0].images && result[0].images.length > 1"
+                      class="multi-image-container"
+                    >
+                      <div class="images-grid">
+                        <div
+                          v-for="(image, imageIndex) in result[0].images"
+                          :key="imageIndex"
+                          class="image-card"
+                        >
+                          <img
+                            :src="image.url"
+                            class="result-image"
+                            @click="showImageDetail({...result[0], ...image})"
+                          />
+                          <div class="image-info">
+                            <span class="image-index"
+                              >图片 {{ image.index }}/{{ image.total }}</span
+                            >
+                            <a
+                              href="#"
+                              class="action-btn download-btn"
+                              @click="handleDownload($event, image.url, result[0].model, imageIndex)"
+                            >
+                              <i class="fas fa-download"></i>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="result-info">
+                        <div class="result-model">{{ result[0].model }}</div>
+                        <div class="result-prompt">{{ result[0].prompt }}</div>
+                        <div class="action-buttons">
+                          <a
+                            href="#"
+                            class="action-btn view-btn"
+                            @click.prevent="showImageDetail({...result[0], ...result[0].images[0]})"
+                          >
+                            <i class="fas fa-search-plus"></i> 查看详情
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 2.2单图展示 -->
+                    <div v-else>
+                      <div
+                        v-if="result[0].images && result[0].images.length > 0"
+                      >
+                        <img
+                          :src="result[0].images[0].url"
+                          class="result-image"
+                          @click="showImageDetail({...result[0], ...result[0].images[0]})"
+                        />
+                        <div class="result-info">
+                          <div class="result-model">{{ result[0].model }}</div>
+                          <div class="result-prompt">
+                            {{ result[0].prompt }}
+                          </div>
+                          <div class="action-buttons">
+                            <a
+                              href="#"
+                              class="action-btn view-btn"
+                              @click.prevent="showImageDetail({...result[0], ...result[0].images[0]})"
+                            >
+                              <i class="fas fa-search-plus"></i> 查看详情
+                            </a>
+                            <a
+                              href="#"
+                              class="action-btn download-btn"
+                              @click="handleDownload($event, result[0].images[0].url, result[0].model, resultIndex)"
+                            >
+                              <i class="fas fa-download"></i> 下载
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- 在模板中添加图片详情模态框 -->
+            <!-- 图片详情模态框 -->
+            <div v-if="selectedImage" class="image-detail-modal">
+              <div class="modal-content">
+                <button class="close-btn" @click="closeImageDetail">
+                  <i class="fas fa-times"></i>
+                </button>
+                <div class="image-header">
+                  <h3>{{ selectedImage.model }}</h3>
+                  <div v-if="selectedImage.total > 1" class="image-counter">
+                    图片 {{ selectedImage.index }} / {{ selectedImage.total }}
+                  </div>
+                </div>
+                <img :src="selectedImage.url" class="detail-image" />
+              </div>
+            </div>
+
+            <!-- 无结果状态 -->
+            <div class="no-results" v-else-if="!results">
+              <i class="fas fa-image"></i>
+              <h3>尚未生成图像</h3>
+              <p>配置参数并点击"生成图像"按钮开始</p>
+            </div>
+
+            <!-- 历史记录 -->
+            <div class="history-panel" v-if="history.length > 0">
+              <div class="history-header">
+                <div class="panel-title">
+                  <i class="fas fa-history"></i>
+                  <span>历史记录</span>
+                </div>
+                <button class="clear-history-btn" @click="clearHistory">
+                  <i class="fas fa-trash-alt"></i> 清空
+                </button>
+              </div>
+              <div
+                class="history-item"
+                v-for="(item, index) in history"
+                :key="index"
+                @click="loadHistory(item)"
+              >
+                <div class="history-title">
+                  <span>任务 #{{ index + 1 }}</span>
+                  <span class="history-date"
+                    >{{ formatDate(item.timestamp) }}</span
+                  >
+                </div>
+                <div class="history-prompt">{{ item.params.prompt }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const { createApp, ref, reactive, onMounted, watch, computed } = Vue;
+      // 图生图模型
+      const IMG_TO_IMG_MODELS = ["volc_2", "qianwen_2"];
+      const fileInput = ref(null);
+
+      createApp({
+        setup() {
+          // 参数配置
+          const params = reactive({
+            modelUrn: "",
+            prompt: "",
+            negativePrompt: "",
+            modelType: "",
+            width: 1024,
+            height: 768,
+            size: "",
+            scheduler: "EulerA",
+            steps: 20,
+            cfgScale: 7,
+            seed: Math.floor(Math.random() * 1000000),
+            clipSkip: 1,
+            imageBase64: null,
+            n: "",
+          });
+          const selectedImage = ref(null); // 存储选中的图片详情
+          // 显示图片详情的方法
+          const showImageDetail = (imageData) => {
+            selectedImage.value = {
+              url: imageData.url,
+              model: imageData.model,
+              width: imageData.width,
+              height: imageData.height,
+              prompt: imageData.prompt,
+              index: imageData.index || 1, // 默认为1
+              total: imageData.total || 1, // 默认为1
+            };
+          };
+          // 关闭图片详情的方法
+          const closeImageDetail = () => {
+            selectedImage.value = null;
+          };
+          const modelDefaultSizes = {
+            openai: "",
+            qianwen: "",
+            volc: "",
+            wanx: "",
+            civitai: "",
+            fluxschnell: "",
+            all: "",
+          };
+          // 判断当前是否为图生图模型
+          const isImgToImgModel = computed(() => {
+            const imgToImgModels = ["volc_2", "qianwen_2"];
+            return imgToImgModels.includes(params.modelType);
+          });
+          // 验证n值是否在有效范围内
+          const validateN = () => {
+            if (params.modelType !== "volc_2") return;
+            const nValue = params.n;
+            if (nValue === null || nValue === "") {
+              this.nError = "";
+              return;
+            }
+            // 转换为数字
+            const num = Number(nValue);
+            if (isNaN(num)) {
+              alert("请输入有效的数字");
+              return;
+            } else if (num < 1 || num > 15) {
+              alert("生成数量必须在1-15之间");
+              return;
+            }
+          };
+          // 监听模型类型变化
+          watch(
+            () => params.modelType,
+            (newModelType, oldModelType) => {
+              // 重置尺寸参数
+              params.size = null;
+              params.n = null;
+              // 处理图生图模型切换
+              const wasImgToImg = IMG_TO_IMG_MODELS.includes(oldModelType);
+              const isNowImgToImg = IMG_TO_IMG_MODELS.includes(newModelType);
+              if (wasImgToImg && !isNowImgToImg) {
+                // 从图生图切换到文生图：清空图片数据
+                params.imageBase64 = null;
+                // 重置文件输入框
+                if (fileInput.value) {
+                  fileInput.value.value = "";
+                }
+                console.log(`已从图生图模型切换到文生图模型，已清空图片数据`);
+              }
+            },
+            { immediate: true } // 组件挂载时立即执行一次
+          );
+          // 状态变量
+          const isProcessing = ref(false);
+          const progress = ref(0);
+          const progressMessage = ref("任务初始化");
+          const results = ref([]);
+          const history = ref([]);
+          const selectedPreset = ref("");
+          const fileInput = ref(null);
+          const errorMessage = ref("");
+          const presets = ref({});
+
+          // -- 新增 --
+          // 响应式数据：提示词对列表
+          const pairList = ref([]);
+          // 新增：已选择的提示词对列表（存储完整的提示词对对象）
+          const selectPairList = ref([]);
+          // 同理图片
+          const imageBase64Arr = ref([]);
+          const selectImageBase64Arr = ref([]);
+
+          // 添加弹框相关
+          const isAddDialogOpen = ref(false);
+          const addNormalValue = ref(""); // 添加时的普通提示词
+          const addNegativeValue = ref(""); // 添加时的负面提示词
+
+          // 编辑弹框相关
+          const isEditDialogOpen = ref(false);
+          const editIndex = ref(-1); // 当前编辑的提示词对索引
+          const editNormalValue = ref(""); // 编辑时的普通提示词
+          const editNegativeValue = ref(""); // 编辑时的负面提示词
+
+          // 1. 判断某个提示词对是否被选中（通过索引匹配）
+          const isSelected = (index) => {
+            // 比较对象的引用或关键属性（这里用索引+内容双重校验，避免重复）
+            return selectPairList.value.some(
+              (item) =>
+                item.index === index &&
+                item.normal === pairList.value[index].normal &&
+                item.negative === pairList.value[index].negative
+            );
+          };
+
+          // 2. 切换选择状态（选中/取消选中）
+          const toggleSelect = (index, event) => {
+            // 避免点击复选框时重复触发（因为复选框已经绑定了checked状态）
+            if (event.target.classList.contains("pair-checkbox")) return;
+
+            const targetPair = pairList.value[index];
+            // 包装对象，包含索引（用于精准匹配）和完整内容
+            const selectItem = {
+              index,
+              normal: targetPair.normal,
+              negative: targetPair.negative,
+            };
+
+            // 检查是否已选中
+            const isAlreadySelected = isSelected(index);
+            if (isAlreadySelected) {
+              // 取消选择：从selectPairList中移除
+              selectPairList.value = selectPairList.value.filter(
+                (item) =>
+                  !(
+                    item.index === index &&
+                    item.normal === targetPair.normal &&
+                    item.negative === targetPair.negative
+                  )
+              );
+            } else {
+              // 选中：添加到selectPairList
+              selectPairList.value.push(selectItem);
+            }
+          };
+
+          // 3. 清空所有选择
+          const clearSelection = () => {
+            selectPairList.value = [];
+          };
+
+          // 4. 添加提示词对（原有功能，新增：添加后不自动选中）
+          const openAddDialog = () => {
+            addNormalValue.value = "";
+            addNegativeValue.value = "";
+            isAddDialogOpen.value = true;
+          };
+
+          const closeAddDialog = () => {
+            isAddDialogOpen.value = false;
+          };
+
+          const confirmAddPair = () => {
+            if (!addNormalValue.value.trim()) {
+              alert("请输入普通提示词内容！");
+              return;
+            }
+            // if (!addNegativeValue.value.trim()) {
+            //   alert("请输入对应的负面提示词内容！");
+            //   return;
+            // }
+            pairList.value.push({
+              normal: addNormalValue.value.trim(),
+              negative: addNegativeValue.value.trim(),
+            });
+            closeAddDialog();
+          };
+
+          // 5. 编辑提示词对（原有功能，新增：编辑后保持选中状态）
+          const openEditDialog = (index) => {
+            const pair = pairList.value[index];
+            editIndex.value = index;
+            editNormalValue.value = pair.normal;
+            editNegativeValue.value = pair.negative;
+            isEditDialogOpen.value = true;
+          };
+
+          const closeEditDialog = () => {
+            isEditDialogOpen.value = false;
+            editIndex.value = -1;
+          };
+
+          const confirmEditPair = () => {
+            if (!editNormalValue.value.trim()) {
+              alert("请输入普通提示词内容！");
+              return;
+            }
+            // if (!editNegativeValue.value.trim()) {
+            //   alert("请输入对应的负面提示词内容！");
+            //   return;
+            // }
+
+            const oldPair = pairList.value[editIndex.value];
+            // 更新列表项
+            pairList.value[editIndex.value] = {
+              normal: editNormalValue.value.trim(),
+              negative: editNegativeValue.value.trim(),
+            };
+
+            // 如果该提示词对之前是选中状态，更新selectPairList中的对应项
+            const selectedIndex = selectPairList.value.findIndex(
+              (item) =>
+                item.index === editIndex.value &&
+                item.normal === oldPair.normal &&
+                item.negative === oldPair.negative
+            );
+            if (selectedIndex !== -1) {
+              selectPairList.value[selectedIndex] = {
+                index: editIndex.value,
+                normal: editNormalValue.value.trim(),
+                negative: editNegativeValue.value.trim(),
+              };
+            }
+
+            closeEditDialog();
+          };
+
+          // 6. 删除提示词对（原有功能，新增：删除时同步从selectPairList中移除）
+          const deletePair = (index) => {
+            if (confirm(`确定要删除第 ${index + 1} 组提示词对吗？`)) {
+              // 先从selectPairList中移除该组（如果已选中）
+              selectPairList.value = selectPairList.value.filter(
+                (item) => item.index !== index
+              );
+              // 再删除原列表项
+              pairList.value.splice(index, 1);
+
+              // 关键：更新剩余选中项的索引（因为删除中间项后，后续项的索引会变化）
+              selectPairList.value.forEach((item) => {
+                if (item.index > index) {
+                  item.index--;
+                }
+              });
+            }
+          };
+
+          // -- 7. 清空全部提示词对（原有功能，新增：同步清空选择列表）--
+          const clearAll = () => {
+            if (pairList.value.length === 0) {
+              alert("提示词对列表已经是空的啦～");
+              return;
+            }
+            if (confirm("确定要删除所有提示词对吗？")) {
+              pairList.value = [];
+              selectPairList.value = []; // 同步清空选择
+            }
+          };
+
+          // -- 图片相关 --
+          // 1. 触发文件选择框
+          const triggerFileInput = () => {
+            if (fileInput.value) {
+              fileInput.value.click();
+            }
+          };
+
+          // 2. 处理图片上传，转换为 Base64 存入 imageBase64Arr
+          const handleImageUpload = (e) => {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+
+            // 遍历选择的文件
+            Array.from(files).forEach((file) => {
+              // 验证文件类型（虽然 input 已限制，但做双重验证）
+              if (
+                !file.type.match("image/jpeg") &&
+                !file.type.match("image/png")
+              ) {
+                alert(`文件 ${file.name} 不是支持的图片格式（仅支持 JPG/PNG）`);
+                return;
+              }
+
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                // 将 Base64 字符串存入数组（去重：避免重复上传同一张图）
+                if (!imageBase64Arr.value.includes(event.target.result)) {
+                  imageBase64Arr.value.push(event.target.result);
+                }
+              };
+              // 读取文件为 Base64
+              reader.readAsDataURL(file);
+            });
+
+            // 重置文件输入框（否则无法重复选择同一文件）
+            if (fileInput.value) {
+              fileInput.value.value = "";
+            }
+          };
+
+          // 3. 判断图片是否已选中
+          const isImageSelected = (imgBase64) => {
+            return selectImageBase64Arr.value.includes(imgBase64);
+          };
+
+          // 4. 切换图片选择状态（选中/取消选中）
+          const toggleImageSelect = (imgBase64, event) => {
+            // 检查是否已选中
+            const isSelected = isImageSelected(imgBase64);
+            if (isSelected) {
+              // 取消选择：从选中数组中移除
+              selectImageBase64Arr.value = selectImageBase64Arr.value.filter(
+                (img) => img !== imgBase64
+              );
+            } else {
+              // 选中：添加到选中数组
+              selectImageBase64Arr.value.push(imgBase64);
+            }
+          };
+
+          // 5. 清空所有图片（同时清空选中数组）
+          const clearAllImages = () => {
+            if (imageBase64Arr.length === 0) {
+              alert("暂无图片可清空！");
+              return;
+            }
+            if (
+              confirm(
+                `确定要删除所有 ${imageBase64Arr.value.length} 张图片吗？`
+              )
+            ) {
+              imageBase64Arr.value = [];
+              selectImageBase64Arr.value = []; // 同步清空选择
+            }
+          };
+
+          // 6. 清空已选择的图片
+          const clearImageSelection = () => {
+            selectImageBase64Arr.value = [];
+          };
+
+          // 7.批量下载图片
+          const handleManyDownload = async (event) => {
+            event.preventDefault(); // 只在批量函数中调用一次 preventDefault()
+            if (!results.value.length) return;
+
+            // 用 for...of 循环：等待每个下载完成后，再执行下一个
+            for (const [index, result] of results.value.entries()) {
+              if (result[0]?.images.length > 1) {
+                // 根据1个提示词生成多张图片 或 else 单张生成
+                result[0].images.map(async (img) => {
+                  const imageUrl = img.url;
+                  // 顺序执行单个下载，等待其完成（包括延迟）
+                  await handleDownload_util(imageUrl, result[0].model, index);
+                });
+              } else {
+                const imageUrl = result[0]?.images[0]?.url;
+                if (!imageUrl) continue; // 跳过无链接的项
+
+                // 顺序执行单个下载，等待其完成（包括延迟）
+                await handleDownload_util(imageUrl, result[0].model, index);
+              }
+            }
+          };
+
+          // 批量下载中的单个下载工具函数：修复逻辑错误，独立处理，不依赖外部 event
+          const handleDownload_util = async (imageUrl, modelName, index) => {
+            try {
+              // 修复逻辑：判断 modelType 是否为 "volc_2"（去掉多余的 !）
+              if (params.modelType !== "volc_2") {
+                // 非字节图片：fetch 转 Blob 下载（避免跨域需后端配合，此处保留原逻辑）
+                const response = await fetch(imageUrl);
+                if (!response.ok) {
+                  throw new Error(
+                    `下载失败: ${response.status} ${response.statusText}`
+                  );
+                }
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                const fileName = getDownloadFileName(
+                  imageUrl,
+                  modelName,
+                  index
+                );
+                link.download = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+                document.body.appendChild(link);
+                link.click();
+                await new Promise((resolve) => setTimeout(resolve, 500));
+                URL.revokeObjectURL(url); // 清理 Blob 资源
+                document.body.removeChild(link);
+              } else {
+                // 字节图片：a 标签下载，延迟 300ms 避免拦截
+                const alink = document.createElement("a");
+                alink.href = imageUrl;
+                const fileName = getDownloadFileName(
+                  imageUrl,
+                  modelName,
+                  index
+                );
+                alink.download = fileName.replace(/[^a-zA-Z0-9._-]/g, "_"); // 保留文件名逻辑
+                alink.style.display = "none";
+                document.body.appendChild(alink);
+                alink.click();
+                document.body.removeChild(alink);
+                await new Promise((resolve) => setTimeout(resolve, 300)); // 关键延迟
+              }
+            } catch (error) {
+              console.error(
+                `第 ${index + 1} 张图片下载报错（不影响后续）:`,
+                error
+              );
+            }
+          };
+
+          // 单个下载按钮
+          const handleDownload = async (event, imageUrl, modelName, index) => {
+            event.preventDefault();
+            if (!imageUrl) return;
+            // 保存原始按钮状态
+            const originalText = event.target.innerHTML;
+            event.target.innerHTML =
+              '<i class="fas fa-spinner fa-spin"></i> 下载中...';
+            event.target.disabled = true;
+            let link = null;
+            let url = null;
+            try {
+              // 获取图片数据
+              const response = await fetch(imageUrl);
+              if (!response.ok) {
+                throw new Error(
+                  `下载失败: ${response.status} ${response.statusText}`
+                );
+              }
+              // 转换为 Blob
+              const blob = await response.blob();
+              // 创建下载链接
+              url = URL.createObjectURL(blob);
+              link = document.createElement("a");
+              link.href = url;
+              // 设置下载文件名
+              const fileName = getDownloadFileName(imageUrl, modelName, index);
+              link.download = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+              // 触发下载
+              document.body.appendChild(link);
+              link.click();
+              // 添加延迟确保下载开始
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            } catch (error) {
+              console.error("下载失败:", error);
+              // 直接在新窗口中打开图片
+              window.open(imageUrl, "_blank");
+            } finally {
+              // 清理资源
+              if (link && document.body.contains(link)) {
+                document.body.removeChild(link);
+              }
+              if (url) {
+                URL.revokeObjectURL(url);
+              }
+              event.target.innerHTML = originalText;
+              event.target.disabled = false;
+            }
+          };
+
+          // 生成下载文件名的方法
+          const getDownloadFileName = (imageUrl, modelName, index) => {
+            // 生成随机唯一标识
+            const timestamp = Date.now(); // 当前时间戳
+            const randomNum = Math.floor(Math.random() * 10000); // 4位随机数
+            const cleanModelName = (modelName || "image").replace(
+              /[^a-zA-Z0-9]/g,
+              "_"
+            );
+            // 尝试从URL中提取文件扩展名
+            let extension = ".png"; // 默认扩展名
+            if (typeof imageUrl === "string") {
+              // 尝试从URL中提取文件名部分
+              const urlParts = imageUrl.split("/");
+              const lastPart = urlParts[urlParts.length - 1];
+              // 检查是否有查询参数
+              const filePart = lastPart.split("?")[0];
+              // 检查是否有扩展名
+              const dotIndex = filePart.lastIndexOf(".");
+              if (dotIndex > -1) {
+                const possibleExt = filePart
+                  .substring(dotIndex + 1)
+                  .toLowerCase();
+                // 只保留常见的图片扩展名
+                if (
+                  ["png", "jpg", "jpeg", "webp", "gif"].includes(possibleExt)
+                ) {
+                  extension = `.${possibleExt}`;
+                }
+              }
+            }
+            // 使用模型名、时间戳、随机数和索引创建唯一文件名
+            return `${cleanModelName}_${timestamp}_${randomNum}_${index}${extension}`;
+          };
+          // API基础URL
+          const API_BASE_URL =
+            "https://ztdvknsvl6.execute-api.us-west-1.amazonaws.com/ai/image";
+
+          // 从localStorage加载预设和历史记录
+          const loadFromStorage = () => {
+            // 加载预设
+            const savedPresets = localStorage.getItem("aiImagePresets");
+            if (savedPresets) {
+              try {
+                presets.value = JSON.parse(savedPresets);
+              } catch (e) {
+                console.error("加载预设失败:", e);
+              }
+            }
+
+            // 加载历史记录
+            const savedHistory = localStorage.getItem("aiImageHistory");
+            if (savedHistory) {
+              try {
+                history.value = JSON.parse(savedHistory);
+              } catch (e) {
+                console.error("加载历史记录失败:", e);
+              }
+            }
+          };
+
+          // 保存预设到localStorage
+          const savePresetsToStorage = () => {
+            localStorage.setItem(
+              "aiImagePresets",
+              JSON.stringify(presets.value)
+            );
+          };
+
+          // 保存历史记录到localStorage
+          const saveHistoryToStorage = () => {
+            try {
+              localStorage.setItem(
+                "aiImageHistory",
+                JSON.stringify(history.value)
+              );
+            } catch (error) {
+              if (error.name === "QuotaExceededError") {
+                console.warn("存储空间不足，自动清理旧记录");
+                // 清理一半旧记录
+                const halfIndex = Math.ceil(history.value.length / 2);
+                history.value = history.value.slice(0, halfIndex);
+                // 再次尝试保存
+                localStorage.setItem(
+                  "aiImageHistory",
+                  JSON.stringify(history.value)
+                );
+              } else {
+                console.error("保存历史记录失败:", error);
+              }
+            }
+          };
+          // 加载预设
+          const loadPreset = (presetName) => {
+            if (!presetName || isProcessing.value) return;
+
+            const preset = presets.value[presetName];
+            if (preset) {
+              // 复制预设值到params，排除imageBase64
+              Object.keys(preset).forEach((key) => {
+                if (key !== "imageBase64") {
+                  params[key] = preset[key];
+                }
+              });
+              alert(`预设 "${presetName}" 已加载`);
+            } else {
+              alert(`预设 "${presetName}" 不存在`);
+            }
+          };
+
+          // 保存预设
+          const savePreset = () => {
+            if (isProcessing.value) return;
+
+            const presetName = prompt("请输入预设名称:");
+            if (presetName) {
+              // 创建预设副本，排除imageBase64
+              const presetToSave = { ...params };
+              delete presetToSave.imageBase64;
+
+              presets.value[presetName] = presetToSave;
+              savePresetsToStorage();
+              alert(`预设 "${presetName}" 已保存`);
+            }
+          };
+
+          // 清空历史记录
+          const clearHistory = () => {
+            if (confirm("确定要清空所有历史记录吗？")) {
+              history.value = [];
+              localStorage.removeItem("aiImageHistory");
+            }
+          };
+
+          // 触发文件上传
+          const triggerFileUpload = () => {
+            if (isProcessing.value) return;
+            fileInput.value.click();
+          };
+
+          // // 处理拖放 ---- 不再使用，改为图片列表
+          // const handleDrop = (e) => {
+          //   if (isProcessing.value) return;
+
+          //   e.preventDefault();
+          //   const file = e.dataTransfer.files[0];
+          //   if (file) {
+          //     processImage(file);
+          //   }
+          // };
+          // // 处理图片上传（多张）
+          // const handleImageUpload = (e) => {
+          //   if (isProcessing.value) return;
+
+          //   const files = e.target.files;
+          //   const filesArray = Array.from(files);
+          //   if (filesArray) {
+          //     filesArray.forEach((file) => processImage(file));
+          //   }
+          // };
+          // // 处理图片并转换为Base64
+          // const processImage = (file) => {
+          //   if (
+          //     !file.type.match("image/jpeg") &&
+          //     !file.type.match("image/png")
+          //   ) {
+          //     alert("只支持JPG和PNG格式的图片");
+          //     return;
+          //   }
+          //   if (file.size > 5 * 1024 * 1024) {
+          //     alert("图片大小不能超过5MB");
+          //     return;
+          //   }
+          //   const reader = new FileReader();
+          //   reader.onload = (e) => {
+          //     // console.log("imagebase64", e.target.result);
+          //     imageBase64Arr.value.push(e.target.result);
+          //   };
+          //   reader.readAsDataURL(file);
+          // };
+
+          const submitTask = async () => {
+            if (isProcessing.value) return;
+            if (isImgToImgModel.value) {
+              if (selectImageBase64Arr.value.length === 0) {
+                alert("请选择图片");
+                // console.log(`${selectImageBase64Arr.length === 0 ? "" : "请选择图片"}`);
+                return;
+              }
+              // console.log(`${params.imageBase64 ? "" : "请上传图片"}`);
+              // console.log(`modelType: ${params.modelType}`);
+            }
+            if (selectPairList.value.length === 0) {
+              alert("请选择提示词");
+              return;
+            }
+
+            errorMessage.value = "";
+            isProcessing.value = true;
+            progressMessage.value = "提交任务中...";
+            progress.value = 0;
+
+            try {
+              // 提交任务到服务器
+              progressMessage.value = "正在连接服务器...";
+              // 排列组合
+              const combineRes = combinePromptAndImg(
+                selectPairList.value,
+                selectImageBase64Arr.value
+              );
+              // console.log("combineRes", combineRes);
+
+              const paramsList = [];
+              combineRes.map((item) =>
+                paramsList.push({
+                  ...params,
+                  prompt: item.pair.normal,
+                  negativePrompt: item.pair.negative,
+                  imageBase64: item.img,
+                })
+              );
+              // console.log("paramsList", paramsList);
+              // 收集请求taskid的promise网络请求
+              const getTaskIdPromises = [];
+              paramsList.map((item) => {
+                getTaskIdPromises.push(submitTaskToServer(item));
+              });
+
+              const taskIdArr = await Promise.all(getTaskIdPromises);
+
+              const pollTaskStatusArr = [];
+              for (let i = 0; i < taskIdArr.length; i++) {
+                // console.log("taskIdArr", taskIdArr[i]);
+                const taskIdjson = await taskIdArr[i].json();
+                // console.log("taskId", taskIdjson.taskId);
+                pollTaskStatusArr.push(pollTaskStatus(taskIdjson.taskId));
+              }
+              // 确认任务已接收后再更新进度
+              progress.value = 10;
+              progressMessage.value = "任务已提交，等待处理...";
+              // 轮询
+              // console.log("pollArr", pollTaskStatusArr);
+              const res = await Promise.all(pollTaskStatusArr);
+              console.log("res", res);
+
+              // 直接替换 results.value 的值，一次更新即可
+              results.value = [...results.value, ...res];
+
+              // for (let i = 0; i < paramsList.length; i++) {
+              // 成功后添加到历史记录
+              // console.log("addHistory", paramsList[i], results.value[i][0]);
+              // addToHistory(paramsList[i], results.value[i]);
+              // addToHistory(paramsList, results.value);
+              // }
+            } catch (error) {
+              console.error("任务失败:", error);
+              errorMessage.value = "任务失败: " + error.message;
+              progressMessage.value = "任务失败: " + error.message;
+              progress.value = 0;
+            } finally {
+              isProcessing.value = false;
+            }
+          };
+
+          // 组合提示词和图片
+          const combinePromptAndImg = (promptArr, imgArr) => {
+            const result = promptArr.map((prompt) => {
+              const res = imgArr.map((img) => {
+                return {
+                  pair: prompt,
+                  img,
+                };
+              });
+              // console.log("res", res);
+              return res;
+            });
+            return result.flat();
+          };
+
+          // 提交任务到服务器
+          const submitTaskToServer = async (data) => {
+            // console.log("data", data);
+            const payload = { ...data };
+            if (payload.modelType && payload.imageBase64) {
+              payload.modelType = payload.modelType.split("_2")[0];
+            }
+            if (payload.modelType === "volc" && payload.n !== undefined) {
+              const generateCount = Math.min(
+                15,
+                Math.max(1, parseInt(payload.n, 10) || 1)
+              );
+              const imageNoun = generateCount === 1 ? "image" : "images";
+              const countPrompt = `Please generate ${generateCount} high-quality natural ${imageNoun} `;
+              payload.prompt = payload.prompt
+                ? `${payload.prompt.trim()}, ${countPrompt.trim()}`
+                : countPrompt.trim();
+            }
+            payload.prompt += `Please generate ${payload.n} sheets `;
+            // 遍历数组时立即发起多个并行请求，收集它们的 Promise，最后用 Promise.all 统一等待结果
+            const response = fetch(`${API_BASE_URL}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "x-api-key": "1121231d2-30d2-4bd6-a7d9-1a84df4ae2ds1b6",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            return response;
+          };
+
+          // 轮询任务状态
+          const pollTaskStatus = async (taskId) => {
+            const POLL_INTERVAL = 4000; // 轮询间隔（保持4秒/次，兼顾性能与实时性）
+            const TOTAL_TIMEOUT = 7 * 60 * 1000; // 总超时时间：7分钟（毫秒）
+            const maxAttempts = Math.ceil(TOTAL_TIMEOUT / POLL_INTERVAL); // 计算最大轮询次数：7*60*1000/4000=105次
+            let attempts = 0;
+
+            // 初始化显示
+            progressMessage.value = "任务启动中...";
+            progress.value = 0;
+
+            return new Promise((resolve, reject) => {
+              const interval = setInterval(async () => {
+                try {
+                  // 超过最大轮询次数 → 超时终止
+                  if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    const timeoutMsg = "任务超时";
+                    reject(new Error(timeoutMsg));
+                    return;
+                  }
+                  attempts++;
+
+                  const res = await getTaskStatus(taskId);
+                  console.log("轮询结果:", res);
+                  const progressValue =
+                    res.progress !== undefined ? res.progress : progress.value;
+                  // 更新进度显示
+                  progress.value = progressValue;
+
+                  switch (res.status) {
+                    case "pending":
+                      progressMessage.value = "准备生成";
+                      break;
+                    case "running":
+                      progressMessage.value = `生成中 (${progressValue}%)`;
+                      break;
+                    case "completed":
+                      clearInterval(interval);
+                      progressMessage.value = "生成完成";
+                      resolve(res.result);
+                      break;
+                    case "failed":
+                      clearInterval(interval);
+                      reject(new Error(res.error || "任务执行失败"));
+                      break;
+                    default:
+                      progressMessage.value = `等待中（${Math.ceil(
+                        (TOTAL_TIMEOUT - attempts * POLL_INTERVAL) / 1000
+                      )}秒后超时）`;
+                  }
+                } catch (error) {
+                  clearInterval(interval);
+                  reject(new Error(`轮询失败：${error.message}`));
+                }
+              }, POLL_INTERVAL);
+            });
+          };
+          // 获取任务状态
+          const getTaskStatus = async (taskId) => {
+            try {
+              const response = await fetch(`${API_BASE_URL}?taskId=${taskId}`, {
+                headers: {
+                  "x-api-key": "1121231d2-30d2-4bd6-a7d9-1a84df4ae2ds1b6",
+                },
+              });
+              if (!response.ok) {
+                throw new Error(`服务器错误: ${response.status}`);
+              }
+              return await response.json();
+            } catch (error) {
+              throw new Error(`获取任务状态失败: ${error.message}`);
+            }
+          };
+          // 添加到历史记录（优化存储）
+          const addToHistory = (paramsList, resultList) => {
+            console.log("resultList", resultList);
+            // 创建精简版历史项
+            const historyItem = {
+              timestamp: new Date(),
+              params: paramsList.map((paramsItem) => ({
+                modelType: paramsItem.modelType,
+                prompt: paramsItem.prompt,
+                negativePrompt: paramsItem.negativePrompt,
+                width: paramsItem.width,
+                height: paramsItem.height,
+                steps: paramsItem.steps,
+                cfgScale: paramsItem.cfgScale,
+                seed: paramsItem.seed,
+              })),
+              result: resultList.map((res) => {
+                console.log("res", res);
+                return res;
+                // 处理多图情况
+                // if (res.images && Array.isArray(res.images)) {
+                //   return {
+                //     images: res.images.map((img) => ({
+                //       url: img.url,
+                //       index: img.index,
+                //       total: img.total,
+                //     })),
+                //     model: res.model,
+                //     width: res.width,
+                //     height: res.height,
+                //     prompt: res.prompt,
+                //   };
+                // }
+                // // 兼容旧格式
+                // return {
+                //   imageUrl: res.imageUrl || (res.images && res.images[0]?.url),
+                //   model: res.model,
+                //   width: res.width,
+                //   height: res.height,
+                //   prompt: res.prompt,
+                // };
+              }),
+            };
+            // 添加到历史记录数组开头
+            history.value.unshift(historyItem);
+            // 限制历史记录数量（最多10条）
+            const MAX_HISTORY_ITEMS = 10;
+            if (history.value.length > MAX_HISTORY_ITEMS) {
+              history.value = history.value.slice(0, MAX_HISTORY_ITEMS);
+            }
+            // 保存到localStorage
+            saveHistoryToStorage();
+          };
+          // 加载历史记录
+          const loadHistory = (item) => {
+            if (isProcessing.value) return;
+
+            // 复制历史记录参数到当前表单
+            Object.assign(params, {
+              modelType: item.params.modelType,
+              prompt: item.params.prompt,
+              negativePrompt: item.params.negativePrompt,
+              width: item.params.width,
+              height: item.params.height,
+              steps: item.params.steps,
+              cfgScale: item.params.cfgScale,
+              seed: item.params.seed,
+              imageBase64: null,
+            });
+
+            // 显示历史记录结果
+            results.value = item.result.map((res) => {
+              // 处理多图历史记录
+              if (res.images && Array.isArray(res.images)) {
+                return {
+                  success: true,
+                  images: res.images,
+                  model: res.model,
+                  width: res.width,
+                  height: res.height,
+                  prompt: res.prompt,
+                };
+              }
+              // 兼容旧格式
+              return {
+                success: true,
+                imageUrl: res.imageUrl,
+                model: res.model,
+                width: res.width,
+                height: res.height,
+                prompt: res.prompt,
+              };
+            });
+          };
+          // 格式化日期
+          const formatDate = (date) => {
+            const d = new Date(date);
+            return `${d.getFullYear()}-${(d.getMonth() + 1)
+              .toString()
+              .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")} ${d
+              .getHours()
+              .toString()
+              .padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+          };
+
+          // 初始化
+          onMounted(() => {
+            loadFromStorage();
+          });
+
+          return {
+            params,
+            isProcessing,
+            progress,
+            progressMessage,
+            results,
+            history,
+            selectedPreset,
+            fileInput,
+            errorMessage,
+            presets,
+            loadPreset,
+            savePreset,
+            clearHistory,
+            triggerFileUpload,
+            // handleDrop,
+            handleImageUpload,
+            submitTask,
+            loadHistory,
+            formatDate,
+            getDownloadFileName,
+            handleDownload,
+            isImgToImgModel,
+            selectedImage,
+            showImageDetail,
+            closeImageDetail,
+            validateN,
+            // -- 提示词
+            pairList,
+            selectPairList,
+            imageBase64Arr,
+            selectImageBase64Arr,
+            isAddDialogOpen,
+            addNormalValue,
+            addNegativeValue,
+            isEditDialogOpen,
+            editIndex,
+            editNormalValue,
+            editNegativeValue,
+            isSelected,
+            toggleSelect,
+            clearSelection,
+            openAddDialog,
+            closeAddDialog,
+            confirmAddPair,
+            openEditDialog,
+            closeEditDialog,
+            confirmEditPair,
+            deletePair,
+            clearAll,
+            // -- 图
+            triggerFileInput,
+            isImageSelected,
+            toggleImageSelect,
+            clearAllImages,
+            clearImageSelection,
+            combinePromptAndImg,
+            handleManyDownload,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <input
+      class="addImage"
+      type="file"
+      accept="*/image"
+      placeholder="选择图片"
+      multiple
+    />
+  </body>
+
+  <script>
+    const addImageBtn = document.querySelector(".addImage");
+
+    function imageToBase64(file) {
+      console.log("图片转化base64", file);
+      // 创建浏览器文件阅读器 （异步，通过onload/onerror来确定读取结果)
+      const reader = new FileReader();
+      // 对file文件进行阅读，并转化为base64格式
+      reader.readAsDataURL(file);
+      /**
+       *  readAsDataURL(file) 读取文件并转化为base64  适用图片/小文件
+       *  readAsText(file) 读取文件转化文本字符串 适用txt文本文件
+       *  readAsArrayBuffer(file) 读取文件转化buffer 适用大文件，视频与音频等
+       */
+
+      reader.onload = (e) => {
+        const base64Image = e.target.result;
+        console.log("图片转化成功", base64Image);
+      };
+
+      reader.onerror = (err) => {
+        console.log("图片转化失败", err);
+      };
+    }
+
+    addImageBtn.addEventListener("change", (evt) => {
+      console.log("上传了图片");
+      // 获取文件
+      const files = evt.target.files;
+      console.log("files", files); // FileList类型数据
+      const filesArray = Array.from(files);
+      console.log("fileArray", filesArray); // 转为数组类型
+
+      filesArray.forEach((file) => {
+        // File类型，有图片文件的许多属性 name type类型 size大小等
+        if (file.type.startsWith("image/")) {
+          imageToBase64(file);
+        }
+      });
+    });
+  </script>
+</html>
