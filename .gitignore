@@ -12,4 +12,6 @@ dist-ssr/
 
 logs/                  
 *.log                  
-npm-debug.log*         
+npm-debug.log*   
+
+/stuAndtest/demo/01文件获取与压缩/pictures/

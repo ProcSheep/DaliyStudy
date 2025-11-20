@@ -214,36 +214,17 @@
         color: #4b6cb7;
       }
 
-      /* 下载区域 */
-      /* .upload-area {
-        border: 2px dashed #4b6cb7;
-        border-radius: 10px;
-        padding: 20px;
-        text-align: center;
+      /* ==== css 新增位置 ==== */
+
+      /* 公用的btn样式,如需自定义加class前缀限制 */
+      .btn {
+        padding: 0.4rem 0.7rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.6rem;
         cursor: pointer;
-        transition: all 0.3s;
-        background: #f8fbff;
+        transition: background-color 0.3s;
       }
-
-      .upload-area:hover {
-        background: #eef5ff;
-      }
-
-      .upload-area i {
-        font-size: 48px;
-        color: #4b6cb7;
-        margin-bottom: 15px;
-      }
-
-      .image-preview {
-        max-width: 100%;
-        max-height: 200px;
-        margin-top: 15px;
-        border-radius: 8px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-      } */
 
       /* 下载区域，列表 */
       .upload-area {
@@ -261,6 +242,23 @@
         /* transition: background-color 0.3s; */
       }
 
+      /* 选中数量统计 */
+      .upload-area .selected-count {
+        color: #6b7280;
+        font-size: 0.7rem;
+        margin-top: 0.6rem;
+        margin-left: 0.4rem;
+      }
+
+      .upload-area .btn {
+        padding: 0.3rem 0.6rem;
+        border: none;
+        border-radius: 5px;
+        font-size: 0.5rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
       .btn-upload {
         background-color: #4299e1;
         color: white;
@@ -269,6 +267,16 @@
 
       .btn-upload:hover {
         background-color: #3182ce;
+      }
+
+      .btn-selectAllImg {
+        background-color: #4ade80;
+        color: white;
+        margin-right: 1rem;
+      }
+
+      .btn-selectAllImg:hover {
+        background-color: #22c55e;
       }
 
       .btn-clear-images {
@@ -294,14 +302,6 @@
         background-color: #d1d5db;
         cursor: not-allowed;
         opacity: 0.7;
-      }
-
-      /* 选中数量统计 */
-      .upload-area .selected-count {
-        color: #6b7280;
-        font-size: 0.7rem;
-        margin-top: 0.6rem;
-        margin-left: 0.4rem;
       }
 
       /* 图片预览区域 */
@@ -859,18 +859,6 @@
         margin-top: 20px;
       }
 
-      /* .btn {
-        padding: 10px 20px;
-        border-radius: 6px;
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
-      } */
-
       .download-btn {
         background: linear-gradient(135deg, #8a5cf6, #6d28d9);
         color: white;
@@ -1006,16 +994,21 @@
         background-color: #45a049;
       }
 
-      /* --- */
-      .btn {
-        padding: 0.5rem 1rem;
+      .clear-images-btn {
+        background-color: #f56565;
+        color: white;
         border: none;
-        border-radius: 6px;
-        font-size: 0.6rem;
+        padding: 6px 12px;
+        border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s;
       }
 
+      .clear-images-btn:hover {
+        background-color: #e53e3e;
+      }
+
+      /* 提示词css样式区域 */
       .header-actions {
         display: flex;
         gap: 0.8rem;
@@ -1035,6 +1028,16 @@
 
       .btn-add:hover {
         background-color: #3182ce;
+      }
+
+      .header-actions .btn-selectAll {
+        background-color: #4ade80;
+        color: white;
+        margin-left: auto;
+      }
+
+      .header-actions .btn-selectAll:hover {
+        background-color: #22c55e;
       }
 
       .btn-clear {
@@ -1468,6 +1471,9 @@
                   <div class="selected-count">
                     已选择：{{ selectPairList.length }} 组
                   </div>
+                  <button class="btn btn-selectAll" @click="selectAllPrompt">
+                    全选
+                  </button>
                   <button
                     class="btn btn-clear-selection"
                     @click="clearSelection"
@@ -1696,6 +1702,9 @@
                   :disabled="imageBase64Arr.length === 0"
                 >
                   清空所有图片
+                </button>
+                <button class="btn btn-selectAllImg" @click="selectAllImg">
+                  全选
                 </button>
                 <button
                   class="btn btn-clear-selection"
@@ -1937,6 +1946,12 @@
               >
                 <i class="fas fa-download"></i> 批量下载
               </a>
+              <button
+                class="action-btn clear-images-btn"
+                @click="deleteDownload"
+              >
+                清空数据
+              </button>
             </div>
 
             <!-- 进度条 -->
@@ -2038,7 +2053,7 @@
                   </div>
                 </template>
 
-                <!-- 单模型结果展示 (比如字节跳动) -->
+                <!-- 2.单模型结果展示 (比如字节跳动) -->
                 <template v-else>
                   <div class="single-result">
                     <!-- 2.1多图展示 -->
@@ -2126,6 +2141,11 @@
               </div>
             </div>
 
+            <!-- 空列表提示 -->
+            <div class="empty-tip" v-if="results.length === 0">
+              暂无生成结果～
+            </div>
+
             <!-- 在模板中添加图片详情模态框 -->
             <!-- 图片详情模态框 -->
             <div v-if="selectedImage" class="image-detail-modal">
@@ -2194,7 +2214,7 @@
             modelUrn: "",
             prompt: "",
             negativePrompt: "",
-            modelType: "",
+            modelType: "volc_2", // 默认字节跳动图生图
             width: 1024,
             height: 768,
             size: "",
@@ -2311,12 +2331,13 @@
           // 1. 判断某个提示词对是否被选中（通过索引匹配）
           const isSelected = (index) => {
             // 比较对象的引用或关键属性（这里用索引+内容双重校验，避免重复）
-            return selectPairList.value.some(
-              (item) =>
+            return selectPairList.value.some((item) => {
+              return (
                 item.index === index &&
                 item.normal === pairList.value[index].normal &&
                 item.negative === pairList.value[index].negative
-            );
+              );
+            });
           };
 
           // 2. 切换选择状态（选中/取消选中）
@@ -2450,7 +2471,7 @@
             }
           };
 
-          // -- 7. 清空全部提示词对（原有功能，新增：同步清空选择列表）--
+          //  7. 清空全部提示词对（原有功能，新增：同步清空选择列表）
           const clearAll = () => {
             if (pairList.value.length === 0) {
               alert("提示词对列表已经是空的啦～");
@@ -2459,6 +2480,22 @@
             if (confirm("确定要删除所有提示词对吗？")) {
               pairList.value = [];
               selectPairList.value = []; // 同步清空选择
+            }
+          };
+
+          // 8.选择全部提示词
+          const selectAllPrompt = () => {
+            if (
+              pairList.value.length === selectPairList.value.length &&
+              pairList.value.length !== 0
+            ) {
+              alert("已经全选所有提示词了");
+            } else {
+              // 符合isSelect的校验规则，需新增index属性
+              selectPairList.value = pairList.value.map((item, index) => ({
+                index,
+                ...item,
+              }));
             }
           };
 
@@ -2544,6 +2581,19 @@
             selectImageBase64Arr.value = [];
           };
 
+          //  + 选中所有图片
+          const selectAllImg = () => {
+            if (
+              selectImageBase64Arr.value.length ===
+                imageBase64Arr.value.length &&
+              imageBase64Arr.value.length !== 0
+            ) {
+              alert("已经选中所有的图片");
+            } else {
+              selectImageBase64Arr.value = imageBase64Arr.value;
+            }
+          };
+
           // 7.批量下载图片
           const handleManyDownload = async (event) => {
             event.preventDefault(); // 只在批量函数中调用一次 preventDefault()
@@ -2568,7 +2618,7 @@
             }
           };
 
-          // 批量下载中的单个下载工具函数：修复逻辑错误，独立处理，不依赖外部 event
+          // 7.1 批量下载中的单个下载工具函数：修复逻辑错误，独立处理，不依赖外部 event
           const handleDownload_util = async (imageUrl, modelName, index) => {
             try {
               // 修复逻辑：判断 modelType 是否为 "volc_2"（去掉多余的 !）
@@ -2617,6 +2667,11 @@
                 error
               );
             }
+          };
+
+          // -- 8.删除生成的所有ai图片记录，即清空results --
+          const deleteDownload = () => {
+            results.value = [];
           };
 
           // 单个下载按钮
@@ -2809,47 +2864,6 @@
             fileInput.value.click();
           };
 
-          // // 处理拖放 ---- 不再使用，改为图片列表
-          // const handleDrop = (e) => {
-          //   if (isProcessing.value) return;
-
-          //   e.preventDefault();
-          //   const file = e.dataTransfer.files[0];
-          //   if (file) {
-          //     processImage(file);
-          //   }
-          // };
-          // // 处理图片上传（多张）
-          // const handleImageUpload = (e) => {
-          //   if (isProcessing.value) return;
-
-          //   const files = e.target.files;
-          //   const filesArray = Array.from(files);
-          //   if (filesArray) {
-          //     filesArray.forEach((file) => processImage(file));
-          //   }
-          // };
-          // // 处理图片并转换为Base64
-          // const processImage = (file) => {
-          //   if (
-          //     !file.type.match("image/jpeg") &&
-          //     !file.type.match("image/png")
-          //   ) {
-          //     alert("只支持JPG和PNG格式的图片");
-          //     return;
-          //   }
-          //   if (file.size > 5 * 1024 * 1024) {
-          //     alert("图片大小不能超过5MB");
-          //     return;
-          //   }
-          //   const reader = new FileReader();
-          //   reader.onload = (e) => {
-          //     // console.log("imagebase64", e.target.result);
-          //     imageBase64Arr.value.push(e.target.result);
-          //   };
-          //   reader.readAsDataURL(file);
-          // };
-
           const submitTask = async () => {
             if (isProcessing.value) return;
             if (isImgToImgModel.value) {
@@ -2917,6 +2931,7 @@
               // 直接替换 results.value 的值，一次更新即可
               results.value = [...results.value, ...res];
 
+              // 没有历史记录
               // for (let i = 0; i < paramsList.length; i++) {
               // 成功后添加到历史记录
               // console.log("addHistory", paramsList[i], results.value[i][0]);
@@ -3214,14 +3229,17 @@
             confirmEditPair,
             deletePair,
             clearAll,
+            selectAllPrompt,
             // -- 图
             triggerFileInput,
             isImageSelected,
             toggleImageSelect,
             clearAllImages,
+            selectAllImg,
             clearImageSelection,
             combinePromptAndImg,
             handleManyDownload,
+            deleteDownload,
           };
         },
       }).mount("#app");
