@@ -1,0 +1,20 @@
+[
+  {
+    "id": "task_1",
+    "type": "image",
+    "parameters": { "url": "test1.jpg" },
+    "status": "pending"
+  },
+  {
+    "id": "task_2",
+    "type": "text",
+    "parameters": { "content": "test2" },
+    "status": "pending"
+  },
+  {
+    "id": "task_3",
+    "type": "image",
+    "parameters": { "url": "test3.jpg" },
+    "status": "pending"
+  }
+]

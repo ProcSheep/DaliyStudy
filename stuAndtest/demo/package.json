@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "mongoose": "^8.20.1",
     "nanoid": "^5.1.6",
     "sharp": "^0.34.5"
   }
