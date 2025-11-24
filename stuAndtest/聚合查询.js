@@ -11,6 +11,7 @@ db["characters"].aggregate([
       },
     },
   },
+  // 连表查询
   {
     $lookup: {
       from: "conversations",
@@ -19,12 +20,14 @@ db["characters"].aggregate([
       as: "matchedConversations",
     },
   },
+  // 查询结构的数组分组，mongo无法对整个数组操作
   {
     $unwind: {
       path: "$matchedConversations",
       preserveNullAndEmptyArrays: true,
     },
   },
+  // 针对数组的每个单项划定输出格式
   {
     $project: {
       _id: 0,
