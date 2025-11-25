@@ -43,8 +43,8 @@ function handleImg(config, baseUrl) {
       }
 
       // nanoid修改文件的名字 或者 不改名字
-      // const name = customAlphabet(alphabet, 10)();
-      const name = item.split(".")[0];
+      const name = customAlphabet(alphabet, 10)();
+      // const name = item.split(".")[0];
       const fileExt = path.extname(item).toLowerCase();
       let fileName = null;
       if (config.targetExts.includes(fileExt)) {
