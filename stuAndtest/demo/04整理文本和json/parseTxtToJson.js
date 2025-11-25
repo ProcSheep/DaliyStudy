@@ -1,33 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const { customAlphabet } = require("nanoid"); // nanoid改名
-
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const BASE_URL_PHOTOS = "http://192.168.0.133:8800/static/character_photos/";
-const BASE_URL_AVACOV = "http://192.168.0.133:8800/static/character_avacov/";
-
-const txtPath = path.join(__dirname, "character.txt"); // 你的TXT文件
-const jsonPath = path.join(__dirname, "output.json"); // 要生成的JSON文件
-
-// 2. 读取TXT文件内容(异步)
-fs.readFile(txtPath, "utf8", (err, data) => {
-  if (err) {
-    console.error("读TXT文件失败：", err.message);
-    return;
-  }
-
-  // 解析TXT内容，提取键值对
-  const result = parseTxtToJson(data);
-
-  // 把JSON对象写入文件（indent: 2 表示格式化JSON，可读性更强）
-  fs.writeFile(jsonPath, JSON.stringify(result, null, 2), (err) => {
-    if (err) {
-      console.error("写JSON文件失败：", err.message);
-      return;
-    }
-    console.log("转换成功！JSON文件已生成：", jsonPath);
-  });
-});
 
 // 核心解析函数：把TXT字符串转成JSON对象
 function parseTxtToJson(txtContent) {
@@ -38,7 +10,7 @@ function parseTxtToJson(txtContent) {
   const json = {
     name: "", // <- title
     personality: [],
-    origin_name: "", // <- name
+    original_name: "", // <- name
     gender: "male", // 示例TXT是男性，可根据实际修改
     age: "",
     bio: "",
@@ -88,7 +60,7 @@ function parseTxtToJson(txtContent) {
           descriptionParts.unshift(keyTrimmed + ": " + valueTrimmed + "\n");
           break;
         case "Name":
-          json.origin_name = valueTrimmed;
+          json.original_name = valueTrimmed;
           descriptionParts.unshift(keyTrimmed + ": " + valueTrimmed + "\n");
           break;
         case "Gender":
@@ -115,3 +87,31 @@ function parseTxtToJson(txtContent) {
 
   return json;
 }
+
+// 1. 如果不使用await/async, 需要把读取文件的逻辑包装成 Promise, 这是异步操作
+// function getJson(txtPath) {
+//   return new Promise((resolve, reject) => {
+//     fs.readFile(txtPath, "utf8", (err, data) => {
+//       if (err) {
+//         reject(new Error(`读TXT文件失败：${err.message}`)); // 错误抛出去
+//         return;
+//       }
+//       const jsonData = parseTxtToJson(data); // 你的解析逻辑
+//       resolve(jsonData); // 成功时返回结果
+//     });
+//   });
+// }
+
+// 2。更加方便
+function getJson(txtPath) {
+  try {
+    const jsonData = fs.readFileSync(txtPath, "utf8");
+    return parseTxtToJson(jsonData);
+  } catch (error) {
+    console.log("读取txt文件出错了", error);
+  }
+}
+
+module.exports = {
+  getJson,
+};
