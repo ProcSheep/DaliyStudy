@@ -93,7 +93,7 @@ async function handleJson(config) {
         fs.rmSync(itemPath);
         console.log(`已删除文件 ${itemPath}`);
       }
-      return; // 跳过一次循环
+      continue; // 跳过一次循环
     }
 
     // 进入character_1/_2 ... 名字无所谓
