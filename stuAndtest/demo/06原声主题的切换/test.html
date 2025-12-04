@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover, user-scalable=0"
+    />
+    <style>
+      /* 默认使用白天主题变量 */
+      :root {
+        /* 主色调：宝石紫（呼应奖励场景，活力且高级） */
+        --primary-color: #6831ff;
+        --primary-light: #8955fd;
+        --primary-dark: #4c3195;
+        /* 辅助色：奖励金（突出宝石/金币奖励） */
+        --reward-color: #ffb703;
+        /* 功能色：成功/选中/按钮 */
+        --success-color: #be0909;
+        --active-color: #e6f7ff;
+        --active-border: #1890ff;
+        /* 中性色：文字/背景 */
+        --text-title: #181818; /* 标题重文字 */
+        --text-section: #333333; /* 普通段落 */
+        --text-subtitle: #7f7f7f; /* 次要文字 */
+        --text-label: #b2b2b2; /* 描述文字 */
+        /* 背景色 */
+        --bg-page: #f1f4fa; /* 页面底色（柔和不刺眼） */
+        --bg-card: #ffffff; /* 卡片底色 */
+        --bg-glass: rgba(255, 255, 255, 0.18); /* 毛玻璃底色 */
+        --bg-glass-border: rgba(255, 255, 255, 0.25); /* 毛玻璃边框 */
+        --bg-glass-shadow: rgba(
+          76,
+          49,
+          149,
+          0.12
+        ); /* 毛玻璃阴影（呼应主色调） */
+        /* 按钮色 */
+        --btn-primary: linear-gradient(
+          135deg,
+          #6831ff,
+          #8955fd
+        ); /* 主按钮渐变 */
+        --btn-primary-active: linear-gradient(
+          135deg,
+          #4c3195,
+          #6831ff
+        ); /* 按钮按压态 */
+        --btn-disabled: #cccccc; /* 禁用按钮 */
+      }
+
+      /* 暗色主题变量 */
+      .dark-theme {
+        /* 主色调：深宝石紫（呼应暗色主题，高级不刺眼） */
+        --primary-color: #8955fd;
+        --primary-light: #b794f4;
+        --primary-dark: #4c3195;
+        /* 辅助色：奖励金（暗色调中突出奖励感） */
+        --reward-color: #ffd166;
+        /* 功能色：成功/选中/按钮 */
+        --success-color: #34d399;
+        --active-color: #1e293b;
+        --active-border: #8955fd;
+        /* 中性色：文字/背景（暗色层级） */
+        --text-title: #f8fafc; /* 标题高亮白 */
+        --text-section: #e2e8f0; /* 普通文字浅灰 */
+        --text-subtitle: #94a3b8; /* 次要文字中灰 */
+        --text-label: #64748b; /* 描述文字深灰 */
+        /* 背景色（暗色递进） */
+        --bg-page: #0f172a; /* 页面底色（深靛蓝黑） */
+        --bg-card: #1e293b; /* 卡片底色（深灰蓝） */
+        --bg-glass: rgba(30, 41, 59, 0.7); /* 毛玻璃底色（半透明深灰） */
+        --bg-glass-border: rgba(
+          137,
+          85,
+          253,
+          0.2
+        ); /* 毛玻璃边框（主色调半透明） */
+        --bg-glass-shadow: rgba(0, 0, 0, 0.3); /* 毛玻璃阴影（加深层次感） */
+        /* 按钮色 */
+        --btn-primary: linear-gradient(
+          135deg,
+          #6831ff,
+          #8955fd
+        ); /* 主按钮渐变 */
+        --btn-primary-active: linear-gradient(
+          135deg,
+          #4c3195,
+          #6831ff
+        ); /* 按钮按压态 */
+        --btn-disabled: #334155; /* 禁用按钮（深灰） */
+      }
+
+      * {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+        background-color: var(--bg-page);
+        color: var(--text-section);
+        font-family: "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+        transition: background-color 0.3s ease;
+      }
+
+      /* 顶部导航栏：简洁白色卡片感 */
+      .header {
+        height: 12vw;
+        background-color: var(--bg-card);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 4vw;
+        border-bottom: 1px solid rgba(76, 49, 149, 0.08);
+        transition: all 0.3s ease;
+      }
+      .back-btn {
+        width: 6vw;
+        height: 6vw;
+        border-radius: 50%;
+        border: 1px solid rgba(76, 49, 149, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4vw;
+        color: var(--text-title);
+      }
+      .page-title {
+        font-size: 4.5vw;
+        font-weight: 600;
+        color: var(--text-title);
+      }
+      .more-btn,
+      .theme-btn {
+        font-size: 4vw;
+        color: var(--text-subtitle);
+        cursor: pointer;
+        width: 6vw;
+        height: 6vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* 其他样式保持不变，省略... */
+      .content {
+        padding: 4vw;
+      }
+
+      .userid-section {
+        background: var(--bg-glass);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--bg-glass-border);
+        box-shadow: 0 4px 20px var(--bg-glass-shadow);
+        border-radius: 12px;
+        padding: 4vw;
+        margin-bottom: 4vw;
+      }
+
+      .section-title {
+        font-size: 4vw;
+        font-weight: 600;
+        margin-bottom: 3vw;
+        display: flex;
+        align-items: center;
+        color: var(--text-title);
+      }
+      .required-mark {
+        color: var(--success-color);
+        margin-right: 1vw;
+      }
+      .userid-input {
+        width: 100%;
+        height: 10vw;
+        border: 1px solid rgba(104, 49, 255, 0.18);
+        border-radius: 8px;
+        padding: 0 3vw;
+        font-size: 3.5vw;
+        -webkit-user-select: text;
+        user-select: text;
+        background-color: var(--bg-card);
+        box-shadow: inset 0 1px 3px rgba(76, 49, 149, 0.05);
+        color: var(--text-section);
+      }
+      .userid-input::placeholder {
+        color: var(--text-label);
+      }
+
+      .issue-type-section {
+        background-color: var(--bg-card);
+        border-radius: 12px;
+        padding: 4vw;
+        margin-bottom: 4vw;
+        box-shadow: 0 2px 12px rgba(76, 49, 149, 0.05);
+      }
+      .type-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3vw;
+      }
+      .type-option {
+        padding: 2.5vw 4vw;
+        border-radius: 8px;
+        border: 1px solid rgba(76, 49, 149, 0.15);
+        background-color: rgba(104, 49, 255, 0.03);
+        font-size: 3.5vw;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        color: var(--text-section);
+      }
+      .type-option.active {
+        background-color: var(--active-color);
+        border-color: var(--active-border);
+        color: var(--primary-color);
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(24, 144, 255, 0.15);
+      }
+      .type-option:active:not(.active) {
+        background-color: rgba(104, 49, 255, 0.08);
+      }
+
+      .desc-section {
+        background-color: var(--bg-card);
+        border-radius: 12px;
+        padding: 4vw;
+        margin-bottom: 4vw;
+        box-shadow: 0 2px 12px rgba(76, 49, 149, 0.05);
+      }
+      .desc-textarea {
+        width: 100%;
+        height: 30vh;
+        border: 1px solid rgba(104, 49, 255, 0.18);
+        border-radius: 8px;
+        padding: 3vw;
+        font-size: 3.5vw;
+        resize: none;
+        -webkit-user-select: text;
+        user-select: text;
+        background-color: var(--bg-card);
+        box-shadow: inset 0 1px 3px rgba(76, 49, 149, 0.05);
+        color: var(--text-section);
+        line-height: 1.6;
+      }
+      .desc-textarea::placeholder {
+        color: var(--text-label);
+      }
+      .word-count {
+        text-align: right;
+        font-size: 3vw;
+        color: var(--text-label);
+        margin-top: 2vw;
+      }
+
+      .submit-btn-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      .submit-btn {
+        width: 70%;
+        height: 12vw;
+        background: var(--btn-primary);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-size: 4vw;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(104, 49, 255, 0.25);
+        transition: all 0.25s ease;
+      }
+      .submit-btn:active {
+        background: var(--btn-primary-active);
+        box-shadow: 0 3px 12px rgba(104, 49, 255, 0.18);
+        transform: scale(0.98);
+      }
+      .submit-btn:disabled {
+        background: var(--btn-disabled);
+        box-shadow: none;
+        color: rgba(255, 255, 255, 0.8);
+        transform: none;
+      }
+
+      .userid-input:focus,
+      .desc-textarea:focus {
+        outline: none;
+        border-color: var(--primary-light);
+        box-shadow: 0 0 0 3px rgba(137, 85, 253, 0.15);
+      }
+
+      .copy-btn {
+        position: absolute;
+        right: 5vw;
+        top: 14.5vw;
+        color: #878eff;
+        font-size: 3vw;
+        cursor: pointer;
+        padding: 1vw 2vw;
+      }
+
+      .prompt {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 80%;
+        background-color: rgba(0, 0, 0, 0.7);
+        padding: 3vw 5vw;
+        font-size: 3.5vw;
+        border-radius: 10px;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 100;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header glass-effect">
+      <!-- <div class="back-btn">←</div> -->
+      <div></div>
+      <div class="page-title">Feedback</div>
+      <div class="theme-btn" id="themeToggle">🌙</div>
+    </div>
+
+    <div class="content">
+      <div class="userid-section glass-effect">
+        <div class="section-title">
+          <span class="required-mark">*</span>User ID
+        </div>
+        <input type="text" class="userid-input" readonly onclick="copyInfo()" />
+        <span class="copy-btn" onclick="copyInfo()">Copy</span>
+      </div>
+
+      <div class="issue-type-section glass-effect">
+        <div class="section-title">
+          <span class="required-mark">*</span>Issue Type
+        </div>
+        <div class="type-options">
+          <div class="type-option" data-type="functionality">
+            Functionality Issues
+          </div>
+          <div class="type-option active" data-type="product">
+            Product Related
+          </div>
+          <div class="type-option" data-type="complaint">Complaints</div>
+          <div class="type-option" data-type="suggestion">Suggestions</div>
+          <div class="type-option" data-type="other">Other</div>
+        </div>
+      </div>
+
+      <div class="desc-section glass-effect">
+        <div class="section-title">
+          <span class="required-mark">*</span>Description
+        </div>
+        <textarea
+          class="desc-textarea"
+          placeholder="The more information you provide, the more effectively we can resolve your issue~"
+          maxlength="500"
+        ></textarea>
+        <div class="word-count">0/500</div>
+      </div>
+
+      <div class="submit-btn-container">
+        <button class="submit-btn" onclick="submit()">Submit</button>
+      </div>
+
+      <div class="prompt"></div>
+    </div>
+
+    <script>
+      // 主题切换功能
+      const themeToggle = document.getElementById("themeToggle");
+      const html = document.documentElement;
+
+      // 检查本地存储中的主题偏好
+      // 浏览器本身可以设置主题，和这个页面无关，如果没有设置暗色，window.matchMedia("").matches即返回false，执行白色主题
+      if (
+        localStorage.getItem("theme") === "dark" ||
+        (!localStorage.getItem("theme") &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        html.classList.add("dark-theme");
+        themeToggle.textContent = "☀️";
+      } else {
+        html.classList.remove("dark-theme");
+        themeToggle.textContent = "🌙";
+      }
+
+      // 主题切换事件 （按钮直接切换，暗色主题css在白色主题下面，达到了覆盖作用)
+      themeToggle.addEventListener("click", () => {
+        if (html.classList.contains("dark-theme")) {
+          html.classList.remove("dark-theme");
+          themeToggle.textContent = "🌙";
+          localStorage.setItem("theme", "light");
+        } else {
+          html.classList.add("dark-theme");
+          themeToggle.textContent = "☀️";
+          localStorage.setItem("theme", "dark");
+        }
+      });
+
+      // 问题类型单选逻辑
+      let selectedType = "product";
+      document.querySelectorAll(".type-option").forEach((option) => {
+        option.addEventListener("click", function () {
+          document
+            .querySelectorAll(".type-option")
+            .forEach((opt) => opt.classList.remove("active"));
+          this.classList.add("active");
+          selectedType = this.getAttribute("data-type");
+        });
+      });
+
+      // 字数统计
+      const textarea = document.querySelector(".desc-textarea");
+      const wordCount = document.querySelector(".word-count");
+      textarea.addEventListener("input", function () {
+        const length = this.value.length;
+        wordCount.textContent = `${length}/500`;
+        if (length > 500) {
+          this.value = this.value.slice(0, 500);
+          wordCount.textContent = "500/500";
+        }
+      });
+
+      function showToast(val) {
+        const prompt = document.querySelector(".prompt");
+        prompt.textContent = val;
+        prompt.style.opacity = 1;
+        setTimeout(() => {
+          prompt.style.opacity = 0;
+        }, 1500);
+      }
+
+      function getQueryParams() {
+        const url = window.location.href;
+        const urlObj = new URL(url);
+        const searchParams = urlObj.searchParams;
+        const queryParams = {};
+        searchParams.forEach((value, key) => {
+          queryParams[key] = value;
+        });
+        return queryParams;
+      }
+
+      const params = getQueryParams();
+      document.querySelector(".userid-input").value =
+        params.userid || "No UserId";
+
+      let isLoading = false;
+      async function submit() {
+        const content = textarea.value.trim().replace(/\n/g, " ");
+
+        // 验证
+        if (!selectedType) {
+          showToast("Please select an issue type");
+          return;
+        }
+        if (!content) {
+          showToast("Please enter description");
+          return;
+        }
+
+        if (isLoading) return;
+        isLoading = true;
+        const submitBtn = document.querySelector(".submit-btn");
+        submitBtn.disabled = true;
+        submitBtn.style.background = "#808080";
+        submitBtn.style.boxShadow = "none";
+
+        try {
+          const user_id = params.userid === "Guest" ? "Unknown" : params.userid;
+          const type = params.userid === "Guest" ? "Guest" : "User";
+          const data = {
+            user_id,
+            content,
+            title: selectedType,
+            type,
+            sourceAI: 1,
+          };
+
+          const res = await fetch("/question", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (res.ok) {
+            showToast("Submitted successfully!");
+            textarea.value = "";
+            wordCount.textContent = "0/500";
+          } else {
+            const err = await res.json();
+            throw new Error(err.error || "Submission failed");
+          }
+        } catch (error) {
+          showToast(
+            error.response?.data?.error || error.message || "Error occurred"
+          );
+        } finally {
+          isLoading = false;
+          submitBtn.disabled = false;
+          submitBtn.style.background = "var(--btn-primary)";
+          submitBtn.style.boxShadow = "0 5px 15px rgba(137, 85, 253, 0.4)";
+        }
+      }
+
+      async function copyInfo() {
+        try {
+          await navigator.clipboard.writeText(params.userid || "Guest");
+          showToast("User ID copied!");
+        } catch (err) {
+          showToast("Copy failed");
+        }
+      }
+
+      // 阻止手势缩放
+      document.addEventListener("gesturestart", (event) => {
+        event.preventDefault();
+      });
+
+      // 处理输入框聚焦时的滚动问题
+      let originalScrollPosition = 0;
+      document.querySelectorAll("input, textarea").forEach((input) => {
+        input.addEventListener("focus", () => {
+          originalScrollPosition =
+            window.pageYOffset || document.documentElement.scrollTop;
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+          }, 300);
+        });
+
+        input.addEventListener("blur", () => {
+          window.scrollTo(0, originalScrollPosition);
+        });
+      });
+
+      // 点击空白处关闭键盘
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!target.closest("input") && !target.closest("textarea")) {
+          document.activeElement.blur();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+[{
+  "_id": {
+    "$oid": "692cf4307537eb9d89ac095d"
+  },
+  "uuid": "e8076766-29ad-4088-ad6f-4237cc5e6122",
+  "photos": [
+    "http://devs.aiplus2.com:8800/static/photos/1764553777158-395986396.jpeg"
+  ],
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-12-01T01:49:36.411Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-01T01:49:36.411Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692cf7c57537eb9d89ac095f"
+  },
+  "uuid": "e8076766-29ad-4088-ad6f-4237cc5e6122",
+  "photos": [
+    "http://devs.aiplus2.com:8800/static/photos/1764554691221-388321873.jpg",
+    "http://devs.aiplus2.com:8800/static/photos/1764554691253-148049075.jpg",
+    "http://devs.aiplus2.com:8800/static/photos/1764554691253-315403566.jpg"
+  ],
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-12-01T02:04:53.404Z"
+  },
+  "updatedAt": {
+    "$date": "2025-12-01T02:04:53.404Z"
+  }
+}]
