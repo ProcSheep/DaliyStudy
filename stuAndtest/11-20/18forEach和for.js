@@ -43,7 +43,7 @@
 
 // 3.entries
 // entries() 是可迭代对象的方法, 每次迭代输出 [键名, 键值] 数组
-// 特殊地，对象没有entries方法，需要通过Object.entries()把对象先转化为可迭代对象
+// 特殊地，对象Object '{}' 没有entries方法，需要通过Object.entries()把对象先转化为可迭代对象
 const obj2 = { a: 1, b: 2 };
 console.log(Object.entries(obj2)); // -> [ [ 'a', 1 ], [ 'b', 2 ] ]
 for (const [key, value] of Object.entries(obj2)) {

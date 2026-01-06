@@ -179,10 +179,11 @@ const data = {
 };
 
 /**
- *
+ * // 1.new Map组成键值对，复杂度1，快读key->value, 设置map.set(key,value)，获取map.get(key)
+   // 2.new Set，存储唯一值，判断有没有值，复杂度1 / set.has()； 数组复杂度n / set.includes()
  * @param {*} data 所有的数据（数据库/集合）
  * @param {*} required 允许数据
- * @returns
+ * @returns Object
  */
 function filterDatabasesAndCollections(data, required) {
   // 创建required的映射：数据库名 -> 所需集合名的Set
