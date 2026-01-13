@@ -1,3 +1,58 @@
+// class Graph {
+//   constructor() {
+//     this.adjacencyList = new Map();
+//   }
+//   // ding
+//   addVertex(vertex) {
+//     if (!this.adjacencyList.has(vertex)) {
+//       this.adjacencyList.set(vertex, []);
+//     }
+//   }
+//   // bian
+//   addEdge(v1, v2) {
+//     this.adjacencyList.get(v1).push(v2);
+//     this.adjacencyList.get(v2).push(v1);
+//   }
+
+//   // bfs
+//   bfs(start) {
+//     const queue = [start];
+//     const result = [];
+//     const visited = new Set();
+
+//     while (queue.length) {
+//       const vertex = queue.shift();
+
+//       if (visited.has(vertex)) continue;
+
+//       result.push(vertex);
+//       visited.add(vertex);
+
+//       for (const neighbor of this.adjacencyList.get(vertex)) {
+//         if (!visited.has(neighbor)) {
+//           queue.push(neighbor);
+//         }
+//       }
+//     }
+//     return result; // 返回遍历结果
+//   }
+
+//   // dfs 递归
+//   dfs(start, visited = new Set(), result = []) {
+//     if (visited.has(start)) return result;
+
+//     visited.add(start);
+//     result.push(start);
+
+//     for (const neighbor of this.adjacencyList.get(start)) {
+//       this.dfs(neighbor, visited, result);
+//     }
+
+//     return result;
+//   }
+// }
+
+// Usage
 class Graph {
   constructor() {
     // Map 是 JS 中的键值对集合； 键 = 顶点，值 = 该顶点的所有相邻顶点组成的数组
@@ -58,7 +113,6 @@ class Graph {
   }
 }
 
-// Usage
 const graph = new Graph();
 graph.addVertex("A");
 graph.addVertex("B");
@@ -66,5 +120,7 @@ graph.addVertex("C");
 graph.addEdge("A", "B");
 graph.addEdge("A", "C");
 graph.addEdge("B", "C");
-graph.bfs("A"); // ['A', 'B', 'C'] - level by level
-graph.dfs("A"); // ['A', 'B', 'C'] - goes deep first
+const result1 = graph.bfs("A"); // ['A', 'B', 'C'] - level by level
+const result2 = graph.dfs("A"); // ['A', 'B', 'C'] - goes deep first
+console.log("result1", result1);
+console.log("result2", result2);
