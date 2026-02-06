@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSocket客户端</title>
+    <style>
+      #messages {
+        height: 300px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        overflow-y: auto;
+      }
+      #input {
+        width: 80%;
+        padding: 8px;
+        margin-top: 10px;
+      }
+      button {
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>WebSocket消息</h3>
+    <div id="messages"></div>
+    <input type="text" id="input" placeholder="输入消息..." />
+    <button onclick="sendMessage()">发送</button>
+
+    <script>
+      // 1. 连接WebSocket服务端
+      const ws = new WebSocket("ws://localhost:3000");
+      const messagesDiv = document.getElementById("messages");
+      const input = document.getElementById("input");
+
+      // 2. 连接成功回调
+      ws.onopen = () => {
+        addMessage("✅ 已连接到服务端");
+      };
+
+      // 3. 接收服务端消息回调
+      ws.onmessage = (event) => {
+        console.log("event", event);
+        addMessage(`📩 ${event.data}`);
+      };
+
+      // 4. 断开连接回调
+      ws.onclose = () => {
+        addMessage("❌ 与服务端断开连接");
+      };
+
+      // 5. 错误回调
+      ws.onerror = (err) => {
+        addMessage(`❌ 连接错误：${err}`);
+      };
+
+      // 发送消息函数
+      function sendMessage() {
+        const message = input.value.trim();
+        if (message) {
+          ws.send(message); // 向服务端发送消息
+          addMessage(`📤 我：${message}`);
+          input.value = ""; // 清空输入框
+        }
+      }
+
+      // 辅助函数：添加消息到页面
+      function addMessage(text) {
+        const p = document.createElement("p");
+        p.textContent = text;
+        messagesDiv.appendChild(p);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight; // 滚动到底部
+      }
+
+      // 按回车发送消息
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    </script>
+  </body>
+</html>
