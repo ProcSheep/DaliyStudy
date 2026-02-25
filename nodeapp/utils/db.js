@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const establishDbConnection = async () => {
   try {
-    // 端口连接打开，是那个数据库就写那个的名字，27018/**
-    const connect = await mongoose.connect(`mongodb://127.0.0.1:27018/test`);
+    // 端口连接打开，是那个数据库就写那个的名字，27017 or ....
+    const connect = await mongoose.connect(`mongodb://127.0.0.1:27017/test`);
 
     console.log("连接数据库成功");
     console.log(
-      `连接信息: ${connect.connection.host}:${connect.connection.port}, 数据库: ${connect.connection.name}`
+      `连接信息: ${connect.connection.host}:${connect.connection.port}, 数据库: ${connect.connection.name}`,
     );
     return connect;
   } catch (error) {
