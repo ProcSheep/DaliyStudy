@@ -50,12 +50,34 @@ async function getData(page = 1, limit = 1) {
   }
 }
 
-async function test() {
-  // 第一次查询
-  await getData();
-  // 重复
-  await getData();
+async function update() {
+  // 模拟第一条数据缓存的清理,可以写多个
+  const cacheKeys = ["admin:page:1:limit:1"];
 
+  const data = await Admin.findOneAndUpdate(
+    { username: "liuhanjie" },
+    { $set: { age: 23 } },
+    { new: true },
+  );
+  console.log("update-data", data);
+
+  await redisClient.del(cacheKeys);
+  console.log("缓存已清理");
+}
+
+async function test() {
+  /** 1.查+存储缓存 */
+  // // 第一次查询 + 缓存
+  // await getData();
+  // // 重复
+  // await getData();
+
+  /** 2.更新缓存 */
+  await getData(); // 查询并记录第一条数据的缓存
+  await update(); // 更新第一条数据，同时删除旧的缓存
+  await getData(); // 更新新缓存,可去server-cli查（get key）
+
+  // ---
   await redisClient.destroy();
   await mongoose.disconnect();
 }
