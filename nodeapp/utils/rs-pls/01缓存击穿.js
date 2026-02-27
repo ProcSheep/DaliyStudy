@@ -20,7 +20,7 @@ async function getInfo(username) {
   // 返回值：'OK' / null
   // 参数： 唯一标识lockKey，自定义标识1（不重要），配置参数（互斥/过期）
   const lockSuccess = await redisClient.set(lockKey, "1", {
-    condition: "NX", // 当lockKey
+    condition: "NX", // 当lockKey被抢到后，返回'Ok'； 如果已经被别的请求抢了，返回null
     expiration: { type: "EX", value: 5 }, // s
   });
 
@@ -37,7 +37,7 @@ async function getInfo(username) {
     if (info) {
       await redisClient.setEx(cacheKey, 300, JSON.stringify(info));
     } else {
-      await redisClient.setEx(cacheKey, 10, "null"); // 没有查到也缓存10s的"null"（一定要是字符串），释放后续请求查询内存，防止击穿再次查数据库
+      await redisClient.setEx(cacheKey, 10, "null"); // 没有查到也缓存10s的"null"（一定要是字符串），后续请求查询内存仍可以查到数据，防止击穿再次查数据库，但是“null”也代表着数据库没有这个数据，无法缓存有效的的数据进入redis
     }
     return { code: 200, data: info || null, msg: "分布式锁已存储缓存数据" };
   } catch (error) {

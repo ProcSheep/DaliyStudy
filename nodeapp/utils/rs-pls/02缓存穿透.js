@@ -29,7 +29,7 @@ async function iptAge(age) {
   const data = await Admin.find({ age });
   if (!data) {
     // 没有数据缓存一个短期"null"
-    await redisClient.setEx(cacheKey, "null", 10);
+    await redisClient.setEx(cacheKey, 10, "null");
     return { code: 404, msg: "商品不存在" };
   } else {
     await redisClient.setEx(cacheKey, 600, JSON.stringify(data));
