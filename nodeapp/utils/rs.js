@@ -7,7 +7,7 @@ const { Schema } = mongoose;
 const adminSchema = new Schema({}, { strict: false });
 const Admin = mongoose.model("admin", adminSchema);
 
-// 创建后连接
+// 创建redis并连接connect
 const redisClient = createClient({
   url: "redis://127.0.0.1:6379",
   socket: { timeout: 5000 },
